@@ -39,13 +39,13 @@ def fill_null(data: pd.DataFrame, column: str, null_values: list[int] = None, me
         
     return df[column]
 
-def rescale(data: pd.DataFrame, column: str, replace_values: map):
+def rescale(data: pd.DataFrame, column: str, replace_values: dict):
     """Replace the values
     
     Args:
         data: pd.dataframe object
         column: string - the column name
-        replace_values: map - the values that are to be replaced
+        replace_values: dict - the values that are to be replaced
     
     Returns:
         Series object
