@@ -1,7 +1,11 @@
+
+from typing import Union, Dict, List
+from util.features_info import Feature, FeatureType, FEATURES_DICT
+
 import numpy as np
 
 
-def drop_features(data: np.ndarray, feature_to_drop: str | list[str], features: list[str], feature_index: dict):
+def drop_features(data: np.ndarray, feature_to_drop: Union[str, list[str]], features: list[str], feature_index: dict):
     """
     Drop a feature for all the samples.
     :param data: np.array of shape (N, D)
@@ -28,7 +32,7 @@ def drop_features(data: np.ndarray, feature_to_drop: str | list[str], features: 
     return data, features, feature_index
 
 
-def keep_features(data: np.ndarray, features_to_keep: str | list[str], features: list[str], feature_index: dict):
+def keep_features(data: np.ndarray, features_to_keep: Union[str, list[str]], features: list[str], feature_index: dict):
     """
     Keep only the feature(s) specified in features_to_keep.
     :param data: np.array of shape (N, D)
@@ -77,4 +81,30 @@ def drop_feature_threshold(data: np.ndarray, features: list[str], feature_index:
             features_to_drop.append(f)
     assert len(features_to_drop) == len(ids_features_to_drop)
 
-    return drop_feature(data, features_to_drop, features, feature_index)
+    return drop_features(data, features_to_drop, features, feature_index)
+
+
+def align_nans(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]) -> np.ndarray:
+    """
+
+    :param x:
+    :param where:
+    :param feature_index:
+    :return:
+    """
+    if type(where) == str:
+        where = [where]
+
+    x_processed = x.copy()
+
+    for feature_name in where:
+        assert feature_name in feature_index
+        assert feature_name in FEATURES_DICT
+        idx = feature_index[feature_name]
+        feature = FEATURES_DICT[feature_name]
+
+        # set nan in a vectorized way
+        set_nan = np.vectorize(lambda v: v if not feature.isnan(v) else np.nan)
+        x_processed[:, idx] = set_nan(x_processed[:, idx])
+
+    return x_processed

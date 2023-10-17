@@ -2,8 +2,6 @@
 from typing import Dict, List
 from enum import Enum
 
-from pydantic.config import Union
-
 
 class FeatureType(Enum):
 
@@ -29,26 +27,24 @@ class Feature:
         if nan_aliases is None:
             nan_aliases = []
 
-        self.nan_alieses: List[int]
+        self.nan_aliases: List[int]
         if feature_type == FeatureType.BOOL:
-            self.nan_alieses = [7, 9] + nan_aliases
-        elif feature_type == FeatureType.FLAG:
-            self.nan_alieses = nan_aliases
-        elif feature_type == FeatureType.NUMERIC:
-            self.nan_alieses = nan_aliases
+            self.nan_aliases = [7, 9] + nan_aliases
+        else:
+            self.nan_aliases = nan_aliases
 
     def __repr__(self):
         return self.feature_name
 
     def isnan(self, v):
-        is_valid: bool = v not in self.nan_alieses
+        is_valid: bool = v not in self.nan_aliases
 
         if self.feature_type == FeatureType.BOOL:
-            return v in {1, 2} and is_valid
+            return not (v in {1, 2} and is_valid)
         elif self.feature_type == FeatureType.RANGE:
-            return v <= self.max_value and is_valid
+            return not (v <= self.max_value and is_valid)
         elif self.feature_type == FeatureType.NUMERIC:
-            return is_valid
+            return not is_valid
 
 
 
