@@ -16,6 +16,9 @@ def drop_features(data: np.ndarray, feature_to_drop: Union[str, list[str]], feat
     :return: data, features, feature_index updated after dropping the feature(s) specified in feature_to_drop
     """
 
+    if type(feature_to_drop) == str:
+        feature_to_drop = [feature_to_drop]
+
     # Get the index of the feature to drop
     ids_feature_to_drop = [feature_index[feature] for feature in feature_to_drop]
 
@@ -40,6 +43,9 @@ def keep_features(data: np.ndarray, features_to_keep: Union[str, list[str]], fea
     :param features: list(str) of the names of the features
     :param feature_index: dict(str : int) linking the name of the features to their index
     """
+
+    if type(features_to_keep) == str:
+        features_to_keep = [features_to_keep]
 
     # Get the index of the feature to keep
     ids_features_to_keep = [feature_index[feature] for feature in features_to_keep]
@@ -126,7 +132,8 @@ def map_values(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[
     """
 
     vectorized_remapping = np.vectorize(lambda feature, v:
-                                        feature.map_values[v] if not np.isnan(v) and v in feature.map_values else v)
+                                        feature.map_values[v] if not np.isnan(v) and v in feature.map_values else v,
+                                        otypes=[np.float64])
     return _apply_preprocessing(x, where, feature_index, vectorized_remapping)
 
 
@@ -157,7 +164,3 @@ def _apply_preprocessing(x: np.ndarray, where: Union[str, List[str]], feature_in
         x_processed[:, idx] = vectorized_operation(feature, x_processed[:, idx])
 
     return x_processed
-
-
-def pca():
-    standardized_data = (data - data.mean(axis = 0)) / data.std(axis = 0)
