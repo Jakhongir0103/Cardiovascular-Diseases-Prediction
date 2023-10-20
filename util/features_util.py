@@ -125,7 +125,8 @@ def map_values(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[
     :return: (new) dataset after the preprocessing
     """
 
-    vectorized_remapping = np.vectorize(lambda feature, v: feature.map_values[v] if v in feature.map_values else v)
+    vectorized_remapping = np.vectorize(lambda feature, v:
+                                        feature.map_values[v] if not np.isnan(v) and v in feature.map_values else v)
     return _apply_preprocessing(x, where, feature_index, vectorized_remapping)
 
 
@@ -156,3 +157,7 @@ def _apply_preprocessing(x: np.ndarray, where: Union[str, List[str]], feature_in
         x_processed[:, idx] = vectorized_operation(feature, x_processed[:, idx])
 
     return x_processed
+
+
+def pca():
+    standardized_data = (data - data.mean(axis = 0)) / data.std(axis = 0)
