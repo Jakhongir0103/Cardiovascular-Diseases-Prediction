@@ -48,94 +48,94 @@ class Feature:
 
 
 
-HEALTH_FEATURES: List[Feature] = [Feature("GENHLTH", FeatureType.RANGE, max_value=5),
-                                  Feature("PHYSHLTH", FeatureType.RANGE, max_value=30),
-                                  Feature("MENTHLTH", FeatureType.RANGE, max_value=30),
-                                  Feature("POORHLTH", FeatureType.RANGE, max_value=30)]
+HEALTH_FEATURES: List[Feature] = [Feature("GENHLTH", FeatureType.RANGE, max_value=5),   # ok
+                                  Feature("PHYSHLTH", FeatureType.RANGE, max_value=30), # 88 is 0
+                                  Feature("MENTHLTH", FeatureType.RANGE, max_value=30), # 88 is 0
+                                  Feature("POORHLTH", FeatureType.RANGE, max_value=30)] # 88 is 0
 
-HEALTHCARE_FEATURES: List[Feature] = [Feature("PERSDOC2", FeatureType.RANGE, max_value=3),
-                                      Feature("MEDCOST", FeatureType.BOOL),
-                                      Feature("CHECKUP1", FeatureType.RANGE, max_value=5),
-                                      Feature("_HCVU651", FeatureType.BOOL)]
+HEALTHCARE_FEATURES: List[Feature] = [Feature("PERSDOC2", FeatureType.RANGE, max_value=3),  # ok
+                                      Feature("MEDCOST", FeatureType.BOOL),                 # ok
+                                      Feature("CHECKUP1", FeatureType.RANGE, max_value=5),  # 8 should mean infinite (put to 5 or bigger)
+                                      Feature("_HCVU651", FeatureType.BOOL)]                # ok
 
-HYPERTENSION_FEATURES: List[Feature] = [Feature("_CHOLCHK", FeatureType.RANGE, max_value=3),
-                                        Feature("_RFCHOL", FeatureType.BOOL)]
+HYPERTENSION_FEATURES: List[Feature] = [Feature("_CHOLCHK", FeatureType.RANGE, max_value=3),    # ok
+                                        Feature("_RFCHOL", FeatureType.BOOL)]                   # ok
 
-CHRONIC_FEATURES: List[Feature] = [Feature("CVDSTRK3", FeatureType.BOOL),
-                                   Feature("_ASTHMS1", FeatureType.RANGE, max_value=3),
-                                   Feature("CHCSCNCR", FeatureType.BOOL),
-                                   Feature("CHCOCNCR", FeatureType.BOOL),
-                                   Feature("CHCCOPD1", FeatureType.BOOL),
-                                   Feature("_DRDXAR1", FeatureType.BOOL),
-                                   Feature("ADDEPEV2", FeatureType.BOOL),
-                                   Feature("CHCKIDNY", FeatureType.BOOL),
-                                   Feature("DIABETE3", FeatureType.RANGE, max_value=5),
-                                   Feature("DIABAGE2", FeatureType.RANGE, max_value=97)]
+CHRONIC_FEATURES: List[Feature] = [Feature("CVDSTRK3", FeatureType.BOOL),   # ok
+                                   Feature("_ASTHMS1", FeatureType.RANGE, max_value=3), # ok
+                                   Feature("CHCSCNCR", FeatureType.BOOL),   # ok
+                                   Feature("CHCOCNCR", FeatureType.BOOL),   # ok
+                                   Feature("CHCCOPD1", FeatureType.BOOL),   # ok
+                                   Feature("_DRDXAR1", FeatureType.BOOL),   # ok
+                                   Feature("ADDEPEV2", FeatureType.BOOL),   # ok
+                                   Feature("CHCKIDNY", FeatureType.BOOL),   # ok
+                                   Feature("DIABETE3", FeatureType.RANGE, max_value=5),     # maybe 4 should go before 3
+                                   Feature("DIABAGE2", FeatureType.RANGE, max_value=97)]    # ok
 
-DEMOGRAPHICS_FEATURES: List[Feature] = [Feature("SEX", FeatureType.BOOL),
-                                        Feature("_AGE80", FeatureType.NUMERIC),
-                                        Feature("MARITAL", FeatureType.RANGE, max_value=6),
-                                        Feature("_CHLDCNT", FeatureType.RANGE, max_value=97),
-                                        Feature("_EDUCAG", FeatureType.RANGE, max_value=5),
-                                        Feature("_INCOMG", FeatureType.RANGE, max_value=5),
-                                        Feature("PREGNANT", FeatureType.BOOL),
-                                        Feature("QLACTLM2", FeatureType.BOOL),
-                                        Feature("USEEQUIP", FeatureType.BOOL),
-                                        Feature("DECIDE", FeatureType.BOOL),
-                                        Feature("DIFFWALK", FeatureType.BOOL),
-                                        Feature("DIFFDRES", FeatureType.BOOL),
-                                        Feature("DIFFALON", FeatureType.BOOL),
-                                        Feature("HTM4", FeatureType.NUMERIC),
-                                        Feature("WTKG3", FeatureType.NUMERIC, nan_aliases=[99999]),
-                                        Feature("_BMI5", FeatureType.NUMERIC)]
+DEMOGRAPHICS_FEATURES: List[Feature] = [Feature("SEX", FeatureType.BOOL),       # ok
+                                        Feature("_AGE80", FeatureType.NUMERIC), # maybe should be range
+                                        Feature("MARITAL", FeatureType.RANGE, max_value=6),     # think about the order
+                                        Feature("_CHLDCNT", FeatureType.RANGE, max_value=6),    # ok
+                                        Feature("_EDUCAG", FeatureType.RANGE, max_value=4),     # ok
+                                        Feature("_INCOMG", FeatureType.RANGE, max_value=5),     # ok
+                                        Feature("PREGNANT", FeatureType.BOOL),  # ok
+                                        Feature("QLACTLM2", FeatureType.BOOL),  # ok
+                                        Feature("USEEQUIP", FeatureType.BOOL),  # ok
+                                        Feature("DECIDE", FeatureType.BOOL),    # ok  
+                                        Feature("DIFFWALK", FeatureType.BOOL),  # ok
+                                        Feature("DIFFDRES", FeatureType.BOOL),  # ok
+                                        Feature("DIFFALON", FeatureType.BOOL),  # ok
+                                        Feature("HTM4", FeatureType.NUMERIC),   # ok
+                                        Feature("WTKG3", FeatureType.NUMERIC, nan_aliases=[99999]), # ok
+                                        Feature("_BMI5", FeatureType.NUMERIC)]  # ok
 
-TOBACCO_FEATURES: List[Feature] = [Feature("_SMOKER3", FeatureType.RANGE, max_value=5),
-                                   Feature("USENOW3", FeatureType.RANGE, max_value=3)]
+TOBACCO_FEATURES: List[Feature] = [Feature("_SMOKER3", FeatureType.RANGE, max_value=4), # ok
+                                   Feature("USENOW3", FeatureType.RANGE, max_value=3)]  # ok
 
-ALCOHOL_FEATURES: List[Feature] = [Feature("DRNKANY5", FeatureType.BOOL),
-                                   Feature("DROCDY3_", FeatureType.NUMERIC, nan_aliases=[900]),
-                                   Feature("_RFBING5", FeatureType.BOOL),
-                                   Feature("_DRNKWEK", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                   Feature("_RFDRHV5", FeatureType.BOOL)]
+ALCOHOL_FEATURES: List[Feature] = [Feature("DRNKANY5", FeatureType.BOOL),   # ok
+                                   Feature("DROCDY3_", FeatureType.NUMERIC, nan_aliases=[900]), # ok
+                                   Feature("_RFBING5", FeatureType.BOOL),   # ok
+                                   Feature("_DRNKWEK", FeatureType.NUMERIC, nan_aliases=[99900]), # ok
+                                   Feature("_RFDRHV5", FeatureType.BOOL)]   # ok
 
-FRUIT_FEATURES: List[Feature] = [Feature("FTJUDA1_", FeatureType.NUMERIC),
-                                 Feature("FRUTDA1_", FeatureType.NUMERIC),
-                                 Feature("BEANDAY_", FeatureType.NUMERIC),
-                                 Feature("GRENDAY_", FeatureType.NUMERIC),
-                                 Feature("ORNGDAY_", FeatureType.NUMERIC),
-                                 Feature("VEGEDA1_", FeatureType.NUMERIC),
-                                 Feature("_MISFRTN", FeatureType.NUMERIC),
-                                 Feature("_MISVEGN", FeatureType.NUMERIC),
-                                 Feature("_FRUTSUM", FeatureType.NUMERIC),
-                                 Feature("_VEGESUM", FeatureType.NUMERIC),
-                                 Feature("_FRTLT1", FeatureType.NUMERIC),
-                                 Feature("_VEGLT1", FeatureType.BOOL),
-                                 Feature("_FRT16",  FeatureType.FLAG),
-                                 Feature("_VEG23", FeatureType.FLAG)]
+FRUIT_FEATURES: List[Feature] = [Feature("FTJUDA1_", FeatureType.NUMERIC),  # ok
+                                 Feature("FRUTDA1_", FeatureType.NUMERIC),  # ok
+                                 Feature("BEANDAY_", FeatureType.NUMERIC),  # ok
+                                 Feature("GRENDAY_", FeatureType.NUMERIC),  # ok
+                                 Feature("ORNGDAY_", FeatureType.NUMERIC),  # ok
+                                 Feature("VEGEDA1_", FeatureType.NUMERIC),  # ok
+                                 Feature("_MISFRTN", FeatureType.RANGE, max_value=2), # do we need this?
+                                 Feature("_MISVEGN", FeatureType.RANGE, max_value=4), # do we need this?
+                                 Feature("_FRUTSUM", FeatureType.NUMERIC),  # ok
+                                 Feature("_VEGESUM", FeatureType.NUMERIC),  # ok
+                                 Feature("_FRTLT1", FeatureType.BOOL),  # ok
+                                 Feature("_VEGLT1", FeatureType.BOOL),  # ok
+                                 Feature("_FRT16",  FeatureType.FLAG),  # do we need this?
+                                 Feature("_VEG23", FeatureType.FLAG)]   # do we need this?
 
-EXERCISE_FEATURES: List[Feature] = [Feature("_TOTINDA", FeatureType.BOOL),
-                                    Feature("METVL11_", FeatureType.NUMERIC),
-                                    Feature("METVL21_", FeatureType.NUMERIC),
-                                    Feature("MAXVO2_", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                    Feature("ACTIN11_", FeatureType.NUMERIC),
-                                    Feature("ACTIN21_", FeatureType.NUMERIC),
-                                    Feature("PADUR1_", FeatureType.NUMERIC),
-                                    Feature("PADUR2_", FeatureType.NUMERIC),
-                                    Feature("PAFREQ1_", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                    Feature("PAFREQ2_", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                    Feature("_MINAC11", FeatureType.NUMERIC),
-                                    Feature("_MINAC21", FeatureType.NUMERIC),
-                                    Feature("STRFREQ_", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                    Feature("PA1MIN_", FeatureType.NUMERIC),
-                                    Feature("PAVIG11_", FeatureType.NUMERIC),
-                                    Feature("PAVIG21_", FeatureType.NUMERIC),
-                                    Feature("PA1VIGM_", FeatureType.NUMERIC),
-                                    Feature("_PACAT1",  FeatureType.RANGE, max_value=5),
-                                    Feature("_PAINDX1", FeatureType.BOOL),
-                                    Feature("_PA150R2", FeatureType.RANGE, max_value=3),
-                                    Feature("_PA300R2", FeatureType.RANGE, max_value=3),
-                                    Feature("_PA30021", FeatureType.BOOL),
-                                    Feature("_PASTRNG", FeatureType.BOOL)]
+EXERCISE_FEATURES: List[Feature] = [Feature("_TOTINDA", FeatureType.BOOL),  # ok
+                                    Feature("METVL11_", FeatureType.NUMERIC),   # ok
+                                    Feature("METVL21_", FeatureType.NUMERIC),   # ok
+                                    Feature("MAXVO2_", FeatureType.NUMERIC, nan_aliases=[99900]),   # ok
+                                    Feature("ACTIN11_", FeatureType.RANGE, max_value=2),   # ok
+                                    Feature("ACTIN21_", FeatureType.RANGE, max_value=2),   # ok
+                                    Feature("PADUR1_", FeatureType.NUMERIC),    # ok
+                                    Feature("PADUR2_", FeatureType.NUMERIC),    # ok
+                                    Feature("PAFREQ1_", FeatureType.NUMERIC, nan_aliases=[99900]),  # ok
+                                    Feature("PAFREQ2_", FeatureType.NUMERIC, nan_aliases=[99900]),  # ok   
+                                    Feature("_MINAC11", FeatureType.NUMERIC),   # ok
+                                    Feature("_MINAC21", FeatureType.NUMERIC),   # ok
+                                    Feature("STRFREQ_", FeatureType.NUMERIC, nan_aliases=[99900]),  # ok
+                                    Feature("PA1MIN_", FeatureType.NUMERIC),    # ok
+                                    Feature("PAVIG11_", FeatureType.NUMERIC),   # ok
+                                    Feature("PAVIG21_", FeatureType.NUMERIC),   # ok
+                                    Feature("PA1VIGM_", FeatureType.NUMERIC),   # ok
+                                    Feature("_PACAT1",  FeatureType.RANGE, max_value=4),    # ok
+                                    Feature("_PAINDX1", FeatureType.BOOL),  # ok
+                                    Feature("_PA150R2", FeatureType.RANGE, max_value=3),    # ok
+                                    Feature("_PA300R2", FeatureType.RANGE, max_value=3),    # ok
+                                    Feature("_PA30021", FeatureType.BOOL),  # ok
+                                    Feature("_PASTRNG", FeatureType.BOOL)]  # ok
 
 FEATURES_DICT: Dict[str, Feature] = {f.feature_name: f for f in
                                      HEALTH_FEATURES + HEALTHCARE_FEATURES + HYPERTENSION_FEATURES + CHRONIC_FEATURES +
