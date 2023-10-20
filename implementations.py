@@ -211,3 +211,152 @@ def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: int):
     w = np.linalg.solve(A, b)
     loss = compute_loss(y, tx, w)
     return w, loss
+
+def sigmoid(t):
+    """apply sigmoid function on t.
+
+    Args:
+        t: scalar or numpy array
+
+    Returns:
+        scalar or numpy array
+
+    >>> sigmoid(np.array([0.1]))
+    array([0.52497919])
+    >>> sigmoid(np.array([0.1, 0.1]))
+    array([0.52497919, 0.52497919])
+    """
+
+    return 1 / (1 + np.exp(-t))
+
+def calculate_loss(y, tx, w):
+    """compute the cost by negative log likelihood.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a non-negative loss
+
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(4).reshape(2, 2)
+    >>> w = np.c_[[2., 3.]]
+    >>> round(calculate_loss(y, tx, w), 8)
+    1.52429481
+    """
+    assert y.shape[0] == tx.shape[0]
+    assert tx.shape[1] == w.shape[0]
+
+    N = y.shape[0]
+
+    return np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
+
+def calculate_gradient(y, tx, w):
+    """compute the gradient of loss.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a vector of shape (D, 1)
+
+    >>> np.set_printoptions(8)
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(6).reshape(2, 3)
+    >>> w = np.array([[0.1], [0.2], [0.3]])
+    >>> calculate_gradient(y, tx, w)
+    array([[-0.10370763],
+           [ 0.2067104 ],
+           [ 0.51712843]])
+    """
+
+    N = y.shape[0]
+
+    return (tx.T @ (sigmoid(tx @ w) - y)) / N
+
+def logistic_regression(y, tx, w, max_iter: int, gamma: float):
+    """
+    Do one step of gradient descent using logistic regression. Return the loss and the updated w.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+        max_iter: int
+        gamma: float
+
+    Returns:
+        loss: scalar number
+        w: shape=(D, 1)
+
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(6).reshape(2, 3)
+    >>> w = np.array([[0.1], [0.2], [0.3]])
+    >>> gamma = 0.1
+    >>> loss, w = learning_by_gradient_descent(y, tx, w, gamma)
+    >>> round(loss, 8)
+    0.62137268
+    >>> w
+    array([[0.11037076],
+           [0.17932896],
+           [0.24828716]])
+    """
+    # start the logistic regression
+    for iter in range(max_iter):
+        # get loss and update w.
+        grad = calculate_gradient(y, tx, w)
+        w = w - gamma * grad
+    loss = calculate_loss(y, tx, w)
+    return w, loss
+
+def penalized_logistic_regression(y, tx, w, lambda_):
+    """return the loss and gradient.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+        lambda_: scalar
+
+    Returns:
+        loss: scalar number
+        gradient: shape=(D, 1)
+
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(6).reshape(2, 3)
+    >>> w = np.array([[0.1], [0.2], [0.3]])
+    >>> lambda_ = 0.1
+    >>> loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
+    >>> round(loss, 8)
+    0.63537268
+    >>> gradient
+    array([[-0.08370763],
+           [ 0.2467104 ],
+           [ 0.57712843]])
+    """
+
+    N = y.shape[0]
+    loss = (np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N) + 0.5 * N * lambda_ * np.sum(w ** 2)
+    gradient = ((tx.T @ (sigmoid(tx @ w) - y)) / N) + 2 * lambda_ * w
+    return loss, gradient
+
+def reg_logistic_regression(y, tx, lambda_, w, max_iter: int, gamma: float):
+    # init parameter
+    # threshold = 1e-8
+
+    # start the logistic regression
+    for iter in range(max_iter):
+        # get loss and update w.
+        loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
+        w = w - gamma * gradient
+
+        # if iter > 0 and np.abs(losses[-1] - losses[-2]) < threshold:
+        #     break
+    # compute loss
+    N = y.shape[0]
+    loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
+    return w, loss
