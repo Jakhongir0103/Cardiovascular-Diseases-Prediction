@@ -16,7 +16,8 @@ class Feature:
                  feature_name: str,
                  feature_type: FeatureType,
                  max_value: int = None,
-                 nan_aliases: List[int] = None):
+                 nan_aliases: List[int] = None,
+                 map_values: Dict[int, int] = None):
 
         self.feature_name = feature_name
         self.feature_type = feature_type
@@ -26,7 +27,10 @@ class Feature:
 
         if nan_aliases is None:
             nan_aliases = []
+        if map_values is None:
+            map_values = {}
 
+        self.map_values = map_values
         self.nan_aliases: List[int]
         if feature_type == FeatureType.BOOL:
             self.nan_aliases = [7, 9] + nan_aliases
@@ -47,9 +51,9 @@ class Feature:
             return not is_valid
 
 
-
 HEALTH_FEATURES: List[Feature] = [Feature("GENHLTH", FeatureType.RANGE, max_value=5),   # ok
-                                  Feature("PHYSHLTH", FeatureType.RANGE, max_value=30), # 88 is 0
+                                  Feature("PHYSHLTH", FeatureType.RANGE, max_value=30,
+                                          map_values={88: 0}), # 88 is 0
                                   Feature("MENTHLTH", FeatureType.RANGE, max_value=30), # 88 is 0
                                   Feature("POORHLTH", FeatureType.RANGE, max_value=30)] # 88 is 0
 
