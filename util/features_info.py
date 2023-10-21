@@ -148,6 +148,16 @@ FEATURES_DICT: Dict[str, Feature] = {f.feature_name: f for f in
                                      DEMOGRAPHICS_FEATURES + TOBACCO_FEATURES + ALCOHOL_FEATURES + FRUIT_FEATURES +
                                      EXERCISE_FEATURES}
 
+FEATURES_BY_CATEGORY = {"HEALTH_FEATURES": HEALTH_FEATURES,
+                        "HEALTHCARE_FEATURES": HEALTHCARE_FEATURES,
+                        "HYPERTENSION_FEATURES": HYPERTENSION_FEATURES,
+                        "CHRONIC_FEATURES": CHRONIC_FEATURES,
+                        "DEMOGRAPHICS_FEATURES": DEMOGRAPHICS_FEATURES,
+                        "TOBACCO_FEATURES": TOBACCO_FEATURES,
+                        "ALCOHOL_FEATURES": ALCOHOL_FEATURES,
+                        "FRUIT_FEATURES": FRUIT_FEATURES,
+                        "EXERCISE_FEATURES": EXERCISE_FEATURES}
+
 ####### Features NaN Replacement #######
 
 NAN_REPL_HEALTH: Dict = {'GENHLTH': 'mean',
@@ -213,7 +223,7 @@ NAN_REPL_FRUIT: Dict = {'FTJUDA1_': 'mean',
                         # '_FRTLT1': ,
                         # '_VEGLT1': ,
                         # '_FRT16': ,
-                        # '_VEG23': 
+                        # '_VEG23':
                         }
 
 NAN_REPL_EXERCISE: Dict = {'_TOTINDA': 1,
