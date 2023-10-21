@@ -4,7 +4,6 @@ from enum import Enum
 
 
 class FeatureType(Enum):
-
     BOOL = 5  #
     NUMERIC = 6
     FLAG = 7  # 0, 1 valid data
@@ -50,6 +49,8 @@ class Feature:
         elif self.feature_type == FeatureType.NUMERIC:
             return not is_valid
 
+
+####### Features Static Info #######
 
 HEALTH_FEATURES: List[Feature] = [Feature("GENHLTH", FeatureType.RANGE, max_value=5),
                                   Feature("PHYSHLTH", FeatureType.RANGE, max_value=30, map_values={88: 0}), # 88 means 0
@@ -109,14 +110,14 @@ FRUIT_FEATURES: List[Feature] = [Feature("FTJUDA1_", FeatureType.NUMERIC),
                                  Feature("GRENDAY_", FeatureType.NUMERIC),
                                  Feature("ORNGDAY_", FeatureType.NUMERIC),
                                  Feature("VEGEDA1_", FeatureType.NUMERIC),
-                                 Feature("_MISFRTN", FeatureType.RANGE, max_value=2), # do we need this?
-                                 Feature("_MISVEGN", FeatureType.RANGE, max_value=4), # do we need this?
+                                 Feature("_MISFRTN", FeatureType.RANGE, max_value=2),  # do we need this?
+                                 Feature("_MISVEGN", FeatureType.RANGE, max_value=4),  # do we need this?
                                  Feature("_FRUTSUM", FeatureType.NUMERIC),
                                  Feature("_VEGESUM", FeatureType.NUMERIC),
                                  Feature("_FRTLT1", FeatureType.BOOL),
                                  Feature("_VEGLT1", FeatureType.BOOL),
-                                 Feature("_FRT16",  FeatureType.FLAG),  # do we need this?
-                                 Feature("_VEG23", FeatureType.FLAG)]   # do we need this?
+                                 Feature("_FRT16", FeatureType.FLAG),  # do we need this?
+                                 Feature("_VEG23", FeatureType.FLAG)]  # do we need this?
 
 EXERCISE_FEATURES: List[Feature] = [Feature("_TOTINDA", FeatureType.BOOL),
                                     Feature("METVL11_", FeatureType.NUMERIC),
@@ -127,7 +128,7 @@ EXERCISE_FEATURES: List[Feature] = [Feature("_TOTINDA", FeatureType.BOOL),
                                     Feature("PADUR1_", FeatureType.NUMERIC),
                                     Feature("PADUR2_", FeatureType.NUMERIC),
                                     Feature("PAFREQ1_", FeatureType.NUMERIC, nan_aliases=[99900]),
-                                    Feature("PAFREQ2_", FeatureType.NUMERIC, nan_aliases=[99900]),   
+                                    Feature("PAFREQ2_", FeatureType.NUMERIC, nan_aliases=[99900]),
                                     Feature("_MINAC11", FeatureType.NUMERIC),
                                     Feature("_MINAC21", FeatureType.NUMERIC),
                                     Feature("STRFREQ_", FeatureType.NUMERIC, nan_aliases=[99900]),
@@ -135,7 +136,7 @@ EXERCISE_FEATURES: List[Feature] = [Feature("_TOTINDA", FeatureType.BOOL),
                                     Feature("PAVIG11_", FeatureType.NUMERIC),
                                     Feature("PAVIG21_", FeatureType.NUMERIC),
                                     Feature("PA1VIGM_", FeatureType.NUMERIC),
-                                    Feature("_PACAT1",  FeatureType.RANGE, max_value=4),
+                                    Feature("_PACAT1", FeatureType.RANGE, max_value=4),
                                     Feature("_PAINDX1", FeatureType.BOOL),
                                     Feature("_PA150R2", FeatureType.RANGE, max_value=3),
                                     Feature("_PA300R2", FeatureType.RANGE, max_value=3),
@@ -147,91 +148,104 @@ FEATURES_DICT: Dict[str, Feature] = {f.feature_name: f for f in
                                      DEMOGRAPHICS_FEATURES + TOBACCO_FEATURES + ALCOHOL_FEATURES + FRUIT_FEATURES +
                                      EXERCISE_FEATURES}
 
-#HEALTH_FEATURES: Dict[str, FeatureType] = {"GENHLTH": FeatureType.RANGE1_5,
-#                                           "PHYSHLTH": FeatureType.RANGE1_30,
-#                                           "MENTHLTH": FeatureType.RANGE1_30,
-#                                           "POORHLTH": FeatureType.RANGE1_30}
+####### Features NaN Replacement #######
 
-#HEALTHCARE_FEATURES: Dict[str, FeatureType] = {"PERSDOC2": FeatureType.RANGE1_3,  # Look
-#                                               "MEDCOST": FeatureType.BOOL,
-#                                               "CHECKUP1": FeatureType.RANGE1_5,  # Look
-#                                               "_HCVU651": FeatureType.BOOL}
+NAN_REPL_HEALTH: Dict = {'GENHLTH': 'mean',
+                         'PHYSHLTH': 0,
+                         'MENTHLTH': 0,
+                         'POORHLTH': 0}
 
-#HYPERTENSION_FEATURES: Dict[str, FeatureType] = {"_CHOLCHK": FeatureType.RANGE1_3,
-#                                                 "_RFCHOL": FeatureType.BOOL}
+NAN_REPL_HEALTHCARE: Dict = {'PERSDOC2': 3,
+                             'MEDCOST': 2,
+                             'CHECKUP1': 5,
+                             '_HCVU651': 0}
 
-#CHRONIC_FEATURES: Dict[str, FeatureType] = {"CVDSTRK3": FeatureType.BOOL,
-#                                            "_ASTHMS1": FeatureType.RANGE1_3,
-#                                            "CHCSCNCR": FeatureType.BOOL,
-#                                            "CHCOCNCR": FeatureType.BOOL,
-#                                            "CHCCOPD1": FeatureType.BOOL,
-#                                            "_DRDXAR1": FeatureType.BOOL,
-#                                            "ADDEPEV2": FeatureType.BOOL,
-#                                            "CHCKIDNY": FeatureType.BOOL,
-#                                            "DIABETE3": FeatureType.RANGE1_5,
-#                                            "DIABAGE2": FeatureType.RANGE1_97}
+NAN_REPL_HYPERTENSION: Dict = {'_CHOLCHK': 0,
+                               '_RFCHOL': 0}  # Note: 13% of NaNs
 
-#DEMOGRAPHICS_FEATURES: Dict[str, FeatureType] = {"SEX": FeatureType.BOOL,
-#                                                 "_AGE80": FeatureType.NUMERIC,
-#                                                 "MARITAL": FeatureType.RANGE1_6,
-#                                                 "_CHLDCNT": FeatureType.RANGE1_97,
-#                                                 "_EDUCAG": FeatureType.RANGE1_5,
-#                                                 "_INCOMG": FeatureType.RANGE1_5,
-#                                                 "PREGNANT": FeatureType.BOOL,
-#                                                 "QLACTLM2": FeatureType.BOOL,
-#                                                 "USEEQUIP": FeatureType.BOOL,
-#                                                 "DECIDE": FeatureType.BOOL,
-#                                                 "DIFFWALK": FeatureType.BOOL,
-#                                                 "DIFFDRES": FeatureType.BOOL,
-#                                                 "DIFFALON": FeatureType.BOOL,
-#                                                 "HTM4": FeatureType.NUMERIC,
-#                                                 "WTKG3": FeatureType.NUMERIC,  # WARN: 99999 is NAN
-#                                                 "_BMI5": FeatureType.NUMERIC}
+NAN_REPL_CHRONIC: Dict = {'CVDSTRK3': 0,
+                          '_ASTHMS1': 2,
+                          'CHCSCNCR': 2,
+                          'CHCOCNCR': 2,
+                          'CHCCOPD1': 2,
+                          '_DRDXAR1': 2,
+                          'ADDEPEV2': 2,
+                          'CHCKIDNY': 2,
+                          'DIABETE3': 2,
+                          'DIABAGE2': 'mean'}
 
-#TOBACCO_FEATURES: Dict[str, FeatureType] = {"_SMOKER3": FeatureType.RANGE1_5,
-#                                            "USENOW3": FeatureType.RANGE1_3}
+NAN_REPL_DEMOGRAPHICS: Dict = {  # 'SEX': ,
+    # '_AGE80': ,
+    'MARITAL': 'mean',
+    'CHLDCNT': 'mean',
+    'EDUCAG': 'mean',
+    'INCOMG': 'mean',
+    'PREGNANT': 2,
+    'QLACTLM2': 2,
+    'USEEQUIP': 2,
+    'DECIDE': 2,
+    'DIFFWALK': 2,
+    'DIFFDRES': 2,
+    'DIFFALON': 2,
+    'HTM4': 'mean',
+    'WTKG3': 'mean',
+    '_BMI5': 'mean'}
 
-#ALCOHOL_FEATURES: Dict[str, FeatureType] = {"DRNKANY5": FeatureType.BOOL,
-#                                            "DROCDY3_": FeatureType.NUMERIC, # WARN 900 is nan
-#                                            "_RFBING5": FeatureType.BOOL,
-#                                            "_DRNKWEK": FeatureType.NUMERIC, # WARN 99900 is nan
-#                                            "_RFDRHV5": FeatureType.BOOL}
+NAN_REPL_TOBACCO: Dict = {'_SMOKER3': 4,
+                          'USENOW3': 3}
 
-#FRUIT_FEATURES: Dict[str, FeatureType] = {"FTJUDA1_": FeatureType.NUMERIC,
-#                                          "FRUTDA1_": FeatureType.NUMERIC,
-#                                          "BEANDAY_": FeatureType.NUMERIC,
-#                                          "GRENDAY_": FeatureType.NUMERIC,
-#                                          "ORNGDAY_": FeatureType.NUMERIC,
-#                                          "VEGEDA1_": FeatureType.NUMERIC,
-#                                          "_MISFRTN": FeatureType.NUMERIC,
-#                                          "_MISVEGN": FeatureType.NUMERIC,
-#                                          "_FRUTSUM": FeatureType.NUMERIC,
-#                                          "_VEGESUM": FeatureType.NUMERIC,
-#                                          "_FRTLT1": FeatureType.NUMERIC,
-#                                          "_VEGLT1": FeatureType.BOOL,
-#                                          "_FRT16":  FeatureType.FLAG,
-#                                          "_VEG23": FeatureType.FLAG}
+NAN_REPL_ALCOHOL: Dict = {'DRNKANY5': 'mean',
+                          'DROCDY3_': 'mean',
+                          '_RFBING5': 1,
+                          '_DRNKWEK': 'mean',
+                          '_RFDRHV5': 1}
 
-#EXERCISE_FEATURES: Dict[str, FeatureType] = {"_TOTINDA": FeatureType.BOOL,
-#                                             "METVL11_": FeatureType.NUMERIC,
-#                                             "METVL21_": FeatureType.NUMERIC,
-#                                             "MAXVO2_": FeatureType.NUMERIC,  # warn 99900 is nan
-#                                             "ACTIN11_": FeatureType.NUMERIC,
-#                                             "ACTIN21_": FeatureType.NUMERIC,
-#                                             "PADUR1_": FeatureType.NUMERIC,
-#                                             "PADUR2_": FeatureType.NUMERIC,
-#                                             "PAFREQ1_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "PAFREQ2_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "_MINAC11": FeatureType.NUMERIC,
-#                                             "_MINAC21": FeatureType.NUMERIC,
-#                                             "STRFREQ_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "PA1MIN_": FeatureType.NUMERIC,
-#                                             "PAVIG11_": FeatureType.NUMERIC,
-#                                             "PAVIG21_": FeatureType.NUMERIC,
-#                                             "PA1VIGM_": FeatureType.NUMERIC,
-#                                             "_PACAT1": FeatureType.RANGE1_5,
-#                                             "_PAINDX1": FeatureType.BOOL,
-#                                             "_PA150R2": FeatureType.RANGE1_3,
-#                                             "_PA300R2": FeatureType.RANGE1_3,
-#                                             "_PA30021": FeatureType.BOOL,
-#                                             "_PASTRNG": FeatureType.BOOL}
+NAN_REPL_FRUIT: Dict = {'FTJUDA1_': 'mean',
+                        'FRUTDA1_': 'mean',
+                        'BEANDAY_': 'mean',
+                        'GRENDAY_': 'mean',
+                        'ORNGDAY_': 'mean',
+                        'VEGEDA1_': 'mean',
+                        # '_MISFRTN': ,
+                        # '_MISVEGN': ,
+                        '_FRUTSUM': 'mean',
+                        '_VEGESUM': 'mean',
+                        # '_FRTLT1': ,
+                        # '_VEGLT1': ,
+                        # '_FRT16': ,
+                        # '_VEG23': 
+                        }
+
+NAN_REPL_EXERCISE: Dict = {'_TOTINDA': 1,
+                           'METVL11_': 'mean',
+                           'METVL21_': 'median', # TODO: put mean again, this is just a test
+                           'MAXVO2_': 'mean',
+                           'ACTIN11_': 1,
+                           'ACTIN21_': 1,
+                           'PADUR1_': 'mean',  # maybe median is better
+                           'PADUR2_': 'mean',  # maybe median is better
+                           'PAFREQ1_': 'mean',  # maybe median is better
+                           'PAFREQ2_': 'mean',  # maybe median is better
+                           '_MINAC11': 'mean',  # maybe median is better
+                           '_MINAC21': 'mean',  # maybe median is better
+                           'STRFREQ_': 'mean',  # maybe median is better
+                           'PA1MIN_': 'mean',  # maybe median is better
+                           'PAVIG11_': 'mean',  # maybe median is better
+                           'PAVIG21_': 'mean',  # maybe median is better
+                           'PA1VIGM_': 'mean',  # maybe median is better
+                           '_PACAT1': 4,
+                           '_PAINDX1': 2,
+                           '_PA150R2': 3,
+                           '_PA300R2': 2,
+                           '_PA30021': 2,
+                           '_PASTRNG': 2}
+
+REPLACEMENT_DICT: Dict = {**NAN_REPL_HEALTH,
+                          **NAN_REPL_HEALTHCARE,
+                          **NAN_REPL_HYPERTENSION,
+                          **NAN_REPL_CHRONIC,
+                          **NAN_REPL_DEMOGRAPHICS,
+                          **NAN_REPL_TOBACCO,
+                          **NAN_REPL_ALCOHOL,
+                          **NAN_REPL_FRUIT,
+                          **NAN_REPL_EXERCISE}
