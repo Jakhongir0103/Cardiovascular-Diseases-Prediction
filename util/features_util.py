@@ -85,3 +85,48 @@ def drop_feature_threshold(data: np.ndarray, features: list[str], feature_index:
     assert len(features_to_drop) == len(ids_features_to_drop)
 
     return drop_features(data, features_to_drop, features, feature_index)
+
+
+def keep_uncorrelated_features(data: np.ndarray,
+                               features: Union[list[str], str],
+                               feature_index: Dict[str, int],
+                               threshold: float = 0.9
+                               ):
+    """
+    Keep only the features that are not highly correlated, i.e. the features
+    that have a correlation coefficient lower than the threshold.
+    **Note**: to compute the correlation coefficient, we remove the samples
+    that contain NaN values, so to avoid losing too much data, we **first
+    clean the data with other preprocessing methods**.
+
+    :param data: np.array of shape (N, D)
+    :param features: list(str) of the names of the features
+    :param feature_index: dict(str : int) linking the name of the features to their index
+    :param threshold: threshold for the correlation coefficient
+
+    :return: data, features, feature_index updated after dropping the feature(s) specified in feature_to_drop
+    """
+    nan_mask = np.isnan(data).any(axis=1)
+    clean_data = data[~nan_mask]
+
+    # Calculate the correlation matrix
+    corr_matrix = np.corrcoef(clean_data, rowvar=False)
+    num_cols = clean_data.shape[1]
+    columns_to_remove = set()
+
+    # Iterate through one triangle of the correlation matrix
+    for i in range(num_cols):
+        for j in range(i + 1, num_cols):
+            correlation = corr_matrix[i, j]
+            if abs(correlation) > threshold:
+                # Decide which column to remove based on variance:
+                # choosing the column with the highest variance preserves more
+                # information and reduces data loss.
+                var_i = np.var(clean_data[:, i])
+                var_j = np.var(clean_data[:, j])
+                if var_i > var_j:
+                    columns_to_remove.add(j)
+                else:
+                    columns_to_remove.add(i)
+
+    return drop_features(data, [features[i] for i in columns_to_remove], features, feature_index)
