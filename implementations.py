@@ -358,5 +358,5 @@ def reg_logistic_regression(y, tx, lambda_, w, max_iter: int, gamma: float):
         #     break
     # compute loss
     N = y.shape[0]
-    loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
+    loss = calculate_loss(y, tx, w)
     return w, loss
