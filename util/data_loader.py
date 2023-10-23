@@ -53,3 +53,22 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+
+
+def split_train_validation(x: np.ndarray,
+                           y: np.ndarray,
+                           valid_proportion: float) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+
+    valid_index = np.random.choice(np.arange(x.shape[0]), size=int(x.shape[0] * valid_proportion), replace=False)
+    x_train = x[~np.isin(np.arange(x.shape[0]), valid_index), :]
+    x_valid = x[valid_index, :]
+
+    if y.ndim == 2:
+        y_train = y[~np.isin(np.arange(x.shape[0]), valid_index), :]
+        y_valid = y[valid_index, :]
+    else:
+        assert y.ndim == 1
+        y_train = y[~np.isin(np.arange(x.shape[0]), valid_index)]
+        y_valid = y[valid_index]
+
+    return x_train, x_valid, y_train, y_valid
