@@ -8,13 +8,26 @@ def preprocessing_pipeline(x: np.ndarray,
                            where: Union[str, List[str]],
                            feature_index: Dict[str, int],
                            nan_replacement: List[Tuple[List[str], Union[float, str]]] = None) -> np.ndarray:
+    """
+    Preprocess the dataset x by
+        - 1 Mapping values of each feature using the "map_values" field
+        - 2 Aligning invalid values of each feature to np.nan
+        - 3 (Optionally) replace nan values
+
+    :param x: dataset
+    :param where: feature or list of features where to apply the preprocessing
+    :param feature_index: dictionary that maps feature names to the (column) index in the dataset x
+    :param nan_replacement: list that contains tuples (features,value), where "features" is a list of string,
+        containing the feature names for which np.nan has to be replaced to "value". Here, "value" is either a float,
+        "mean" or "median"
+    :return: (new) dataset after the preprocessing
+    """
     prepro_df = align_nans(map_values(x, where, feature_index), where, feature_index)
     if nan_replacement is not None:
         for (features_list, val) in nan_replacement:
             prepro_df = set_nans_to_value(prepro_df, value=val, where=features_list, feature_index=feature_index)
 
     return prepro_df
-
 
 
 def set_nans_to_value(x: np.ndarray, value: Union[float, str], where: Union[str, List[str]],
