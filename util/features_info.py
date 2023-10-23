@@ -135,14 +135,10 @@ FRUIT_FEATURES: List[Feature] = [
     Feature("GRENDAY_", FeatureType.NUMERIC),
     Feature("ORNGDAY_", FeatureType.NUMERIC),
     Feature("VEGEDA1_", FeatureType.NUMERIC),
-    Feature("_MISFRTN", FeatureType.RANGE, max_value=2),  # do we need this?
-    Feature("_MISVEGN", FeatureType.RANGE, max_value=4),  # do we need this?
     Feature("_FRUTSUM", FeatureType.NUMERIC),
     Feature("_VEGESUM", FeatureType.NUMERIC),
-    # Feature("_FRTLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
-    # Feature("_VEGLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
-    Feature("_FRT16", FeatureType.FLAG),  # do we need this?
-    Feature("_VEG23", FeatureType.FLAG),
+    Feature("_FRTLT1", FeatureType.BOOL),
+    Feature("_VEGLT1", FeatureType.BOOL),
 ]  # do we need this?
 
 EXERCISE_FEATURES: List[Feature] = [
@@ -252,14 +248,10 @@ NAN_REPL_FRUIT: Dict = {
     "GRENDAY_": "mean",
     "ORNGDAY_": "mean",
     "VEGEDA1_": "mean",
-    # '_MISFRTN': ,
-    # '_MISVEGN': ,
     "_FRUTSUM": "mean",
     "_VEGESUM": "mean",
-    # '_FRTLT1': ,
-    # '_VEGLT1': ,
-    # '_FRT16': ,
-    # '_VEG23':
+    "_FRTLT1": 2,
+    "_VEGLT1": 2,
 }
 
 NAN_REPL_EXERCISE: Dict = {
