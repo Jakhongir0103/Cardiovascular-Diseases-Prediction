@@ -3,10 +3,9 @@ import numpy as np
 import csv
 
 
-def load_dataset(path_x_train: str,
-                 path_y_train: str,
-                 path_x_test: str,
-                 sub_sample: bool = False) -> (np.ndarray, np.ndarray, np.ndarray, List[str]):
+def load_dataset(
+    path_x_train: str, path_y_train: str, path_x_test: str, sub_sample: bool = False
+) -> (np.ndarray, np.ndarray, np.ndarray, List[str]):
     """
     Loads the dataset
     :param path_x_train: path of x_train.csv
@@ -16,30 +15,13 @@ def load_dataset(path_x_train: str,
     :return: (x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, feature_names: List)
     """
 
-    features_names = np.genfromtxt(
-        path_x_train,
-        delimiter=",",
-        dtype=str,
-        max_rows=1
-    )
+    features_names = np.genfromtxt(path_x_train, delimiter=",", dtype=str, max_rows=1)
 
-    x_train = np.genfromtxt(
-        path_x_train,
-        delimiter=",",
-        skip_header=1
-    )
+    x_train = np.genfromtxt(path_x_train, delimiter=",", skip_header=1)
 
-    y_train = np.genfromtxt(
-        path_y_train,
-        delimiter=",",
-        skip_header=1
-    )
+    y_train = np.genfromtxt(path_y_train, delimiter=",", skip_header=1)
 
-    x_test = np.genfromtxt(
-        path_x_test,
-        delimiter=",",
-        skip_header=1
-    )
+    x_test = np.genfromtxt(path_x_test, delimiter=",", skip_header=1)
 
     # sub-sample
     if sub_sample:

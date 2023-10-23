@@ -2,7 +2,12 @@ from typing import Union, Dict, List
 import numpy as np
 
 
-def drop_features(data: np.ndarray, feature_to_drop: Union[str, list[str]], features: list[str], feature_index: dict):
+def drop_features(
+    data: np.ndarray,
+    feature_to_drop: Union[str, list[str]],
+    features: list[str],
+    feature_index: dict,
+):
     """
     Drop a feature for all the samples.
     :param data: np.array of shape (N, D)
@@ -32,7 +37,12 @@ def drop_features(data: np.ndarray, feature_to_drop: Union[str, list[str]], feat
     return data, features, feature_index
 
 
-def keep_features(data: np.ndarray, features_to_keep: Union[str, list[str]], features: list[str], feature_index: dict):
+def keep_features(
+    data: np.ndarray,
+    features_to_keep: Union[str, list[str]],
+    features: list[str],
+    feature_index: dict,
+):
     """
     Keep only the feature(s) specified in features_to_keep.
     :param data: np.array of shape (N, D)
@@ -60,7 +70,9 @@ def keep_features(data: np.ndarray, features_to_keep: Union[str, list[str]], fea
     return data, features, feature_index
 
 
-def drop_feature_threshold(data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9):
+def drop_feature_threshold(
+    data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9
+):
     """
     Drop feature for all the samples, if the values for that features are NaN
     for a percentage higher than threshold.
@@ -87,11 +99,12 @@ def drop_feature_threshold(data: np.ndarray, features: list[str], feature_index:
     return drop_features(data, features_to_drop, features, feature_index)
 
 
-def keep_uncorrelated_features(data: np.ndarray,
-                               features: Union[list[str], str],
-                               feature_index: Dict[str, int],
-                               threshold: float = 0.9
-                               ):
+def keep_uncorrelated_features(
+    data: np.ndarray,
+    features: Union[list[str], str],
+    feature_index: Dict[str, int],
+    threshold: float = 0.9,
+):
     """
     Keep only the features that are not highly correlated, i.e. the features
     that have a correlation coefficient lower than the threshold.
@@ -129,4 +142,6 @@ def keep_uncorrelated_features(data: np.ndarray,
                 else:
                     columns_to_remove.add(i)
 
-    return drop_features(data, [features[i] for i in columns_to_remove], features, feature_index)
+    return drop_features(
+        data, [features[i] for i in columns_to_remove], features, feature_index
+    )

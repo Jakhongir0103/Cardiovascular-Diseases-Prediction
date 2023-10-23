@@ -1,7 +1,12 @@
 import numpy as np
 
 
-def drop_features(data: np.ndarray, feature_to_drop: str | list[str], features: list[str], feature_index: dict):
+def drop_features(
+    data: np.ndarray,
+    feature_to_drop: str | list[str],
+    features: list[str],
+    feature_index: dict,
+):
     """
     Drop a feature for all the samples.
     :param data: np.array of shape (N, D)
@@ -28,7 +33,12 @@ def drop_features(data: np.ndarray, feature_to_drop: str | list[str], features: 
     return data, features, feature_index
 
 
-def keep_features(data: np.ndarray, features_to_keep: str | list[str], features: list[str], feature_index: dict):
+def keep_features(
+    data: np.ndarray,
+    features_to_keep: str | list[str],
+    features: list[str],
+    feature_index: dict,
+):
     """
     Keep only the feature(s) specified in features_to_keep.
     :param data: np.array of shape (N, D)
@@ -53,7 +63,9 @@ def keep_features(data: np.ndarray, features_to_keep: str | list[str], features:
     return data, features, feature_index
 
 
-def drop_feature_threshold(data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9):
+def drop_feature_threshold(
+    data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9
+):
     """
     Drop feature for all the samples, if the values for that features are NaN
     for a percentage higher than threshold.

@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def multiple_hists(data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]):
+def multiple_hists(
+    data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]
+):
     if type(columns) == str:
         columns = [columns]
 
@@ -16,7 +18,9 @@ def multiple_hists(data: np.ndarray, columns: Union[str, List[str]], feature_ind
         ax.set_xlabel(column)
 
 
-def correlation_matrix_dist(data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]):
+def correlation_matrix_dist(
+    data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]
+):
     """
     Prints a square plot that shows a correlation heatmap above the diagonal,
     a scatter plot with linear regression below the diagonal, and distribution
@@ -33,11 +37,14 @@ def correlation_matrix_dist(data: np.ndarray, columns: Union[str, List[str]], fe
     if type(columns) == str:
         columns = [columns]
 
-    fig, axs = plt.subplots(n, n, figsize=(16, 16), )
+    fig, axs = plt.subplots(
+        n,
+        n,
+        figsize=(16, 16),
+    )
 
     nan_mask = np.isnan(data).any(axis=1)
     clean_data = data[~nan_mask]
-
 
     for i in range(n):
         for j in range(n):
@@ -46,11 +53,16 @@ def correlation_matrix_dist(data: np.ndarray, columns: Union[str, List[str]], fe
             if i == j:
                 axs[i, j].hist(data[:, feature_index[columns[i]]])
             elif i > j:
-                axs[i, j].plot(x, y, 'o')
+                axs[i, j].plot(x, y, "o")
                 m, b = np.polyfit(x, y, 1)
                 axs[i, j].plot(x, m * x + b)
             else:
-                axs[i, j].imshow([[np.corrcoef(x, y, rowvar=False)[0][1]]], vmin=-1, vmax=1, cmap="RdBu")
+                axs[i, j].imshow(
+                    [[np.corrcoef(x, y, rowvar=False)[0][1]]],
+                    vmin=-1,
+                    vmax=1,
+                    cmap="RdBu",
+                )
                 axs[i, j].grid(None)
                 axs[i, j].xaxis.set_tick_params(labelbottom=False)
                 axs[i, j].yaxis.set_tick_params(labelleft=False)
