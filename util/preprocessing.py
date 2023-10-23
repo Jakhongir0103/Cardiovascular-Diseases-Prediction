@@ -146,3 +146,25 @@ def _apply_preprocessing(
         x_processed[:, idx] = vectorized_operation(feature, x_processed[:, idx])
 
     return x_processed
+
+
+def normalize_features(data: np.ndarray) -> np.ndarray:
+    """
+    Normalize all the data (feature by feature) using MIN-MAX normalization.
+    :param data: np.array of shape (N, D)
+    :return: normalized data of shape (N, D)
+    """
+    
+    N = data.shape[0]
+    D = data.shape[1]
+
+    for i in range(D):
+        feature = data[:, i]
+        # Min-Max normalization
+        min = np.min(feature)
+        max = np.max(feature)
+        if min == max:
+            data[:, i] = np.zeros(N)
+        else:
+            data[:, i] = (feature - min) / (max - min)
+    return data
