@@ -1,5 +1,5 @@
 # lists of features to use
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 from enum import Enum
 
 
@@ -259,3 +259,6 @@ REPLACEMENT_DICT: Dict = {**NAN_REPL_HEALTH,
                           **NAN_REPL_ALCOHOL,
                           **NAN_REPL_FRUIT,
                           **NAN_REPL_EXERCISE}
+
+REPLACEMENT_LIST: List[Tuple[List[str], Union[str, float]]] = [
+    ([key for key in REPLACEMENT_DICT if REPLACEMENT_DICT[key] == v], v) for v in set(REPLACEMENT_DICT.values())]
