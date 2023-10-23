@@ -88,12 +88,12 @@ def custom_random_oversampling(x, y):
 
     # Randomly duplicate instances from the minority class
     oversampled_minority_index = np.random.choice(minority_class.shape[0],
-                                                  size=num_minority*oversample_ratio,
+                                                  size=num_minority*oversample_ratio - num_minority,
                                                   replace=True)
     oversampled_minority = minority_class[oversampled_minority_index, :]
 
     # Combine the oversampled minority class with the majority class
-    x_resampled = np.vstack((majority_class, oversampled_minority))
-    y_resampled = np.hstack((-np.ones(num_majority), np.ones(oversampled_minority.shape[0])))
+    x_resampled = np.vstack((majority_class, minority_class, oversampled_minority))
+    y_resampled = np.hstack((-np.ones(num_majority), np.ones(num_minority + oversampled_minority.shape[0])))
 
     return x_resampled, y_resampled
