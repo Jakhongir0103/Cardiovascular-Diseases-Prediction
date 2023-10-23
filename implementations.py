@@ -284,7 +284,8 @@ def logistic_loss_gradient(y: np.ndarray,
     if neg_class == 0:
         return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
     elif neg_class == -1:
-        return reg + np.sum(- y * tx * sigmoid(- y * (tx @ w)), axis=0) / N
+        s = sigmoid(- y * (tx @ w)).reshape(-1, 1)
+        return reg + np.sum((- y.reshape(-1, 1) * tx) * s, axis=0) / N
     else:
         raise ValueError("neg_class must be either 0 or -1")
 
