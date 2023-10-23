@@ -212,6 +212,7 @@ def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: int):
     loss = compute_loss(y, tx, w)
     return w, loss
 
+
 def sigmoid(t):
     """apply sigmoid function on t.
 
@@ -229,29 +230,64 @@ def sigmoid(t):
 
     return 1 / (1 + np.exp(-t))
 
-def calculate_loss(y, tx, w):
-    """compute the cost by negative log likelihood.
 
-    Args:
-        y:  shape=(N, 1)
-        tx: shape=(N, D)
-        w:  shape=(D, 1)
-
-    Returns:
-        a non-negative loss
-
-    >>> y = np.c_[[0., 1.]]
-    >>> tx = np.arange(4).reshape(2, 2)
-    >>> w = np.c_[[2., 3.]]
-    >>> round(calculate_loss(y, tx, w), 8)
-    1.52429481
+def logistic_loss(y: np.ndarray, 
+                  tx: np.ndarray, 
+                  w: np.ndarray,
+                  _lambda: float = None,
+                  neg_class: int = -1) -> float:
+    """Compute the cost by negative log likelihood.
+    :param  y:  shape=(N, 1)
+    :param  tx: shape=(N, D)
+    :param  w:  shape=(D, 1)
+    :param  _lambda: regularization parameter
+    :param  neg_class: int representing the label either 0 or -1
+    :return loss: scalar number
     """
     assert y.shape[0] == tx.shape[0]
     assert tx.shape[1] == w.shape[0]
 
     N = y.shape[0]
+    reg = 0
+    if _lambda is not None:
+        reg = 0.5 * _lambda * np.sum(w ** 2)
 
-    return np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
+    if neg_class == 0:
+        return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
+    elif neg_class == -1:
+        return reg + np.sum(np.log(1 + np.exp(- y * (tx @ w)))) / N
+    else:
+        raise ValueError("neg_class must be either 0 or -1")
+    
+
+def logistic_loss_gradient(y: np.ndarray,
+                           tx: np.ndarray,
+                           w: np.ndarray,
+                           _lambda: float = None,
+                           neg_class: int = -1) -> np.ndarray:
+    """
+    Compute the gradient of loss for logistic regression, with or without regularization,
+    and with classes represented as (0, 1) or (-1, 1).
+    :param  y:  shape=(N, 1)
+    :param  tx: shape=(N, D)
+    :param  w:  shape=(D, 1)
+    :param  _lambda: regularization parameter
+    :param  neg_class: int representing the label either 0 or -1
+    :return loss: scalar number
+    """
+
+    N = y.shape[0]
+    reg = 0
+    if _lambda is not None:
+        reg = _lambda * w
+    
+    if neg_class == 0:
+        return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
+    elif neg_class == -1:
+        return reg + np.sum(- y * tx * sigmoid(- y * (tx @ w)), axis=0) / N
+    else:
+        raise ValueError("neg_class must be either 0 or -1")
+
 
 def calculate_gradient(y, tx, w):
     """compute the gradient of loss.
@@ -277,6 +313,7 @@ def calculate_gradient(y, tx, w):
     N = y.shape[0]
 
     return (tx.T @ (sigmoid(tx @ w) - y)) / N
+
 
 def logistic_regression(y, tx, w, max_iter: int, gamma: float):
     """
@@ -310,8 +347,9 @@ def logistic_regression(y, tx, w, max_iter: int, gamma: float):
         # get loss and update w.
         grad = calculate_gradient(y, tx, w)
         w = w - gamma * grad
-    loss = calculate_loss(y, tx, w)
+    loss = logistic_loss(y, tx, w)
     return w, loss
+
 
 def penalized_logistic_regression(y, tx, w, lambda_):
     """return the loss and gradient.
@@ -344,6 +382,7 @@ def penalized_logistic_regression(y, tx, w, lambda_):
     gradient = ((tx.T @ (sigmoid(tx @ w) - y)) / N) + 2 * lambda_ * w
     return loss, gradient
 
+
 def reg_logistic_regression(y, tx, lambda_, w, max_iter: int, gamma: float):
     # init parameter
     # threshold = 1e-8
@@ -358,5 +397,7 @@ def reg_logistic_regression(y, tx, lambda_, w, max_iter: int, gamma: float):
         #     break
     # compute loss
     N = y.shape[0]
-    loss = calculate_loss(y, tx, w)
+    loss = logistic_loss(y, tx, w)
     return w, loss
+
+
