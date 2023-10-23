@@ -220,7 +220,7 @@ NAN_REPL_CHRONIC: Dict = {
 NAN_REPL_DEMOGRAPHICS: Dict = {  # 'SEX': ,
     # '_AGE80': ,
     "MARITAL": "mean",
-    "CHLDCNT": "mean",
+    "_CHLDCNT": "mean",
     "EDUCAG": "mean",
     "INCOMG": "mean",
     "PREGNANT": 2,
