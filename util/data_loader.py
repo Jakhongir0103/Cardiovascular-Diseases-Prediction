@@ -72,3 +72,28 @@ def split_train_validation(x: np.ndarray,
         y_valid = y[valid_index]
 
     return x_train, x_valid, y_train, y_valid
+
+
+def custom_random_oversampling(x, y):
+    # Separate the majority and minority classes
+    majority_class = x[y == -1, :]
+    minority_class = x[y == 1, :]
+
+    # Find the number of instances in each class
+    num_majority = len(majority_class)
+    num_minority = len(minority_class)
+
+    # Calculate the oversampling ratio
+    oversample_ratio = num_majority // num_minority
+
+    # Randomly duplicate instances from the minority class
+    oversampled_minority_index = np.random.choice(minority_class.shape[0],
+                                                  size=num_minority*oversample_ratio,
+                                                  replace=True)
+    oversampled_minority = minority_class[oversampled_minority_index, :]
+
+    # Combine the oversampled minority class with the majority class
+    x_resampled = np.vstack((majority_class, oversampled_minority))
+    y_resampled = np.hstack((-np.ones(num_majority), np.ones(oversampled_minority.shape[0])))
+
+    return x_resampled, y_resampled
