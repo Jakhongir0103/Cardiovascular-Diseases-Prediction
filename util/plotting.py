@@ -73,3 +73,20 @@ def correlation_matrix_dist(
                 axs[i, j].set_title(columns[j], fontsize=14)
             if j == 0:
                 axs[i, j].set_ylabel(columns[i], fontsize=14)
+
+
+def loss_visualization(train_loss: np.ndarray,
+                       validation_loss: np.ndarray,):
+    """
+    Plots the loss for the train and validation sets.
+    :param train_loss: loss for the train set
+    :param validation_loss: loss for the validation set
+    """
+    plt.plot(train_loss, marker=".", color="b", label="train loss")
+    plt.plot(validation_loss, marker=".", color="r", label="validation loss")
+
+    plt.xlabel("iter")
+    plt.ylabel("loss")
+    plt.title("Loss")
+    plt.legend(loc=2)
+    plt.grid(True)
