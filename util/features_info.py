@@ -139,8 +139,8 @@ FRUIT_FEATURES: List[Feature] = [
     Feature("_MISVEGN", FeatureType.RANGE, max_value=4),  # do we need this?
     Feature("_FRUTSUM", FeatureType.NUMERIC),
     Feature("_VEGESUM", FeatureType.NUMERIC),
-    Feature("_FRTLT1", FeatureType.BOOL),
-    Feature("_VEGLT1", FeatureType.BOOL),
+    # Feature("_FRTLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
+    # Feature("_VEGLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
     Feature("_FRT16", FeatureType.FLAG),  # do we need this?
     Feature("_VEG23", FeatureType.FLAG),
 ]  # do we need this?
