@@ -5,7 +5,7 @@ from implementations import penalized_logistic_regression
 from implementations import logistic_loss, logistic_loss_gradient, batch_iter
 
 
-def reg_logistic_regression_here(tx_train: np.ndarray, y_train: np.ndarray,
+def reg_logistic_regression(tx_train: np.ndarray, y_train: np.ndarray,
                             tx_valid: np.ndarray, y_valid: np.ndarray,
                             lambda_: float, w: np.ndarray, max_iter: int, gamma: float, batch_size: int = 100, all_losses: bool = False):
     if all_losses:

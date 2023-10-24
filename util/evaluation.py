@@ -67,3 +67,27 @@ def evaluation_summary(true_labels: np.ndarray,
     print(f"Precision: {precision(true_labels, predicted_labels):.2%}")
     print(f"Recall: {recall(true_labels, predicted_labels):.2%}")
     print(f"F1-score: {f1_score(true_labels, predicted_labels):.2%}")
+
+def confusion_matrix(true_labels: np.ndarray, predicted_labels: np.ndarray):
+    # Calculate the confusion matrix
+    classes = [1, -1]
+    cm = np.zeros((len(classes), len(classes)), dtype=float)
+
+    for i_idx, i in enumerate(classes):
+        for j_idx, j in enumerate(classes):
+            cm[i_idx, j_idx] = 100 * np.sum((true_labels == i) & (predicted_labels == j)) / len(true_labels)
+            
+    # Create the confusion matrix heatmap
+    plt.figure(figsize=(8, 6))
+    cax = plt.matshow(cm, cmap='Blues')
+
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            plt.text(j, i, f'{cm[i, j]:.2f}%', va='center', ha='center', color='black', fontsize=12)
+
+    plt.xticks(range(len(classes)), classes)
+    plt.yticks(range(len(classes)), classes)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
