@@ -82,6 +82,8 @@ def loss_visualization(train_loss: np.ndarray,
     :param train_loss: loss for the train set
     :param validation_loss: loss for the validation set
     """
+    plt.figure(figsize=(14, 7))
+
     plt.plot(train_loss, marker=".", color="b", label="train loss")
     plt.plot(validation_loss, marker=".", color="r", label="validation loss")
 

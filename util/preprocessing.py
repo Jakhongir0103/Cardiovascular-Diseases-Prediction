@@ -9,12 +9,14 @@ def preprocessing_pipeline(
     where: Union[str, List[str]],
     feature_index: Dict[str, int],
     nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
+    normalize: bool = True,
 ) -> np.ndarray:
     """
     Preprocess the dataset x by
         - 1 Mapping values of each feature using the "map_values" field
         - 2 Aligning invalid values of each feature to np.nan
         - 3 (Optionally) replace nan values
+        - 4 (Optionally) normalize features
 
     :param x: dataset
     :param where: feature or list of features where to apply the preprocessing
@@ -22,6 +24,7 @@ def preprocessing_pipeline(
     :param nan_replacement: list that contains tuples (features,value), where "features" is a list of string,
         containing the feature names for which np.nan has to be replaced to "value". Here, "value" is either a float,
         "mean" or "median"
+    :param normalize: whether to normalize the features
     :return: (new) dataset after the preprocessing
     """
     prepro_df = align_nans(map_values(x, where, feature_index), where, feature_index)
@@ -31,7 +34,10 @@ def preprocessing_pipeline(
                 prepro_df, value=val, where=features_list, feature_index=feature_index
             )
 
-    return prepro_df
+    if normalize:
+        return normalize_features(prepro_df)
+    else:
+        return prepro_df
 
 
 def set_nans_to_value(
@@ -154,17 +160,9 @@ def normalize_features(data: np.ndarray) -> np.ndarray:
     :param data: np.array of shape (N, D)
     :return: normalized data of shape (N, D)
     """
-    
-    N = data.shape[0]
-    D = data.shape[1]
 
-    for i in range(D):
-        feature = data[:, i]
-        # Min-Max normalization
-        min = np.min(feature)
-        max = np.max(feature)
-        if min == max:
-            data[:, i] = np.zeros(N)
-        else:
-            data[:, i] = (feature - min) / (max - min)
-    return data
+    data_normalized = np.empty_like(data)
+    for column in range(data.shape[1]):
+        data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (data[:, column].max() - data[:, column].min())
+    return data_normalized
+

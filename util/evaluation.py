@@ -68,6 +68,7 @@ def evaluation_summary(true_labels: np.ndarray,
     print(f"Recall: {recall(true_labels, predicted_labels):.2%}")
     print(f"F1-score: {f1_score(true_labels, predicted_labels):.2%}")
 
+
 def confusion_matrix(true_labels: np.ndarray, predicted_labels: np.ndarray):
     # Calculate the confusion matrix
     classes = [1, -1]

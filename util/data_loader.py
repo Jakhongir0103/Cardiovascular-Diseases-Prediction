@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 import numpy as np
 import csv
 
@@ -32,11 +32,13 @@ def load_dataset(
     return x_train, y_train, x_test, features_names
 
 
-def create_csv_submission(ids, y_pred, name):
+def create_csv_submission(ids: Union[List, np.ndarray],
+                          y_pred: np.ndarray,
+                          path: str):
     """
     This function creates a csv file named 'name' in the format required for a submission in Kaggle or AIcrowd.
     The file will contain two columns the first with 'ids' and the second with 'y_pred'.
-    y_pred must be a list or np.array of 1 and -1 otherwise the function will raise a ValueError.
+    y_pred must be a list or np.ndarray of 1 and -1 otherwise the function will raise a ValueError.
 
     Args:
         ids (list,np.array): indices
@@ -47,7 +49,7 @@ def create_csv_submission(ids, y_pred, name):
     if not all(i in [-1, 1] for i in y_pred):
         raise ValueError("y_pred can only contain values -1, 1")
 
-    with open(name, "w", newline="") as csvfile:
+    with open(path, "w", newline="") as csvfile:
         fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
