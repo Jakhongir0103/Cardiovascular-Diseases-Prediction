@@ -92,3 +92,28 @@ def loss_visualization(train_loss: np.ndarray,
     plt.title("Loss")
     plt.legend(loc=2)
     plt.grid(True)
+
+
+def confusion_matrix(true_labels: np.ndarray, predicted_labels: np.ndarray):
+    # Calculate the confusion matrix
+    classes = [1, -1]
+    cm = np.zeros((len(classes), len(classes)), dtype=float)
+
+    for i_idx, i in enumerate(classes):
+        for j_idx, j in enumerate(classes):
+            cm[i_idx, j_idx] = 100 * np.sum((true_labels == i) & (predicted_labels == j)) / len(true_labels)
+
+    # Create the confusion matrix heatmap
+    plt.figure(figsize=(8, 6))
+    cax = plt.matshow(cm, cmap='Blues')
+
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            plt.text(j, i, f'{cm[i, j]:.2f}%', va='center', ha='center', color='black', fontsize=12)
+
+    plt.xticks(range(len(classes)), classes)
+    plt.yticks(range(len(classes)), classes)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
