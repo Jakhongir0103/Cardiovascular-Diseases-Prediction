@@ -120,7 +120,7 @@ def keep_uncorrelated_features(
     :return: data, features, feature_index updated after dropping the feature(s) specified in feature_to_drop
     """
     nan_mask = np.isnan(data).any(axis=1)
-    clean_data = data[~nan_mask]
+    clean_data = data[~nan_mask, :]
 
     # Calculate the correlation matrix
     corr_matrix = np.corrcoef(clean_data, rowvar=False)
