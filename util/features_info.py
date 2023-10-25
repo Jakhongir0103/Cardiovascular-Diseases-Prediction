@@ -466,7 +466,7 @@ NAN_REPL_ANXIETY_DEPRESSION: Dict = {
 }
 
 NAN_REPL_MISC_CALCULATED_VARIABLES: Dict = {
-    "RFHYPE5": 1,
+    "_RFHYPE5": 1,
     "_CHOLCHK": 3,
     "_RFCHOL": "mean",
     "_LTASTH1": 1,

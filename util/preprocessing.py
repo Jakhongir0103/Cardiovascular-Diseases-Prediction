@@ -144,6 +144,9 @@ def _apply_preprocessing(
     x_processed = x.copy()
 
     for feature_name in where:
+        if feature_name not in feature_index or feature_name not in FEATURES_DICT:
+            print(f"Feature {feature_name} not found in the dataset")
+
         assert feature_name in feature_index
         assert feature_name in FEATURES_DICT
         idx = feature_index[feature_name]
