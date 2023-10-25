@@ -3,6 +3,8 @@ from typing import Union, List, Dict
 import matplotlib.pyplot as plt
 import numpy as np
 
+from util.predict import predict
+from util.evaluation import accuracy, f1_score
 
 def multiple_hists(
     data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]
@@ -122,3 +124,33 @@ def confusion_matrix(true_labels: np.ndarray, predicted_labels: np.ndarray):
     plt.ylabel('True')
     plt.title('Confusion Matrix')
     plt.show()
+
+
+def decision_threshold(x_validation: np.ndarray,
+                       w_opt: np.ndarray,
+                       y_validation: np.ndarray):
+    """
+    Plots the accuracy and the F1 score for different decision thresholds.
+    :param x_validation: validation set, used to compute predictions
+    :param w_opt: optimal weights
+    :param y_validation: validation (true) labels
+    """
+
+    thresholds = np.linspace(0, 1, 200)
+    accuracies = []
+    f1_scores = []
+
+    for threshold in thresholds:
+        y_prediction = predict(x_validation, w_opt, threshold)
+        accuracies.append(accuracy(y_validation, y_prediction))
+        f1_scores.append(f1_score(y_validation, y_prediction))
+
+    plt.figure(figsize=(14, 7))
+    plt.plot(thresholds, accuracies, label='Accuracy')
+    plt.plot(thresholds, f1_scores, label='F1 score')
+    plt.xlabel('Decision threshold')
+    plt.ylabel('Metric')
+    plt.title('Accuracy and F1 score for different decision thresholds')
+    plt.legend()
+    plt.show()
+

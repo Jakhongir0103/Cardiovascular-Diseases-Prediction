@@ -1,37 +1,71 @@
 import numpy as np
 
 
-def custom_pca(data: np.ndarray, k: int, features: list[str]):
-    """
-    Performs principal component analysis on the given data and returns the reduced data and features.
+class CustomPCA:
+    def __init__(self):
+        self.eigenvalues = None
+        self.eigenvectors = None
 
-    :param data: The data to perform PCA on.
-    :param k: The number of principal components to use.
-    :param features: The features of the data.
-    :return: The reduced data and features.
-    """
-    # Standardize data
-    standardized_data = data - data.mean(axis=0)
+    def fit(self, data):
+        """
+        Performs principal component analysis on the given data and saves the eigenvalues and eigenvectors.
+        :param data: The data to perform PCA on.
+        :param k: The number of principal components to use.
+        """
+        # Standardize data
+        standardized_data = data - data.mean(axis=0)
 
-    # Compute covariance matrix
-    covariance_matrix = np.cov(standardized_data, ddof=1, rowvar=False)
+        # Compute covariance matrix
+        covariance_matrix = np.cov(standardized_data, ddof=1, rowvar=False)
 
-    # Compute eigenvalues and eigenvectors
-    eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
+        # Compute eigenvalues and eigenvectors
+        eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
 
-    # Sort eigenvalues and eigenvectors
-    order_of_importance = np.argsort(eigenvalues)[::-1]
-    sorted_eigenvalues = eigenvalues[order_of_importance]
-    sorted_eigenvectors = eigenvectors[:, order_of_importance]  # sort the columns
-    sorted_features = [features[i] for i in order_of_importance]
+        # Sort eigenvalues and eigenvectors
+        order_of_importance = np.argsort(eigenvalues)[::-1]
+        sorted_eigenvalues = eigenvalues[order_of_importance]
+        sorted_eigenvectors = eigenvectors[:, order_of_importance]
 
-    # use sorted_eigenvalues to ensure the explained variances correspond to the eigenvectors
-    explained_variance = sorted_eigenvalues / np.sum(sorted_eigenvalues)
+        self.eigenvalues = sorted_eigenvalues
+        self.eigenvectors = sorted_eigenvectors
 
-    # select the number of principal components
-    reduced_data = np.matmul(
-        standardized_data, sorted_eigenvectors[:, :k]
-    )  # transform the original data
-    reduced_features = sorted_features[:k]
+    def transform(self, data: np.ndarray, k: int = None, threshold: float = 0.8):
+        """
+        Apply PCA to the given data using the previously saved eigenvalues and eigenvectors.
+        If k is not specified, the number of principal components is chosen such that the
+        cumulative explained variance is above the threshold.
 
-    return reduced_data, reduced_features
+        :param data: The data to reduce dimensionality on.
+        :param threshold: The threshold for the cumulative explained variance.
+        :param k: The number of principal components to use.
+        :return: The reduced data.
+        """
+        if k is None:
+            k = self._num_of_PCs(threshold)
+
+        standardized_data = data - data.mean(axis=0)
+        reduced_data = np.matmul(standardized_data, self.eigenvectors[:, :k])
+        return reduced_data
+
+    def explained_variance(self):
+        """
+        Return the explained variance of the saved eigenvalues.
+        """
+        return self.eigenvalues / np.sum(self.eigenvalues)
+
+    def _num_of_PCs(self,
+                    threshold: float) -> int:
+        """
+        Returns the number of principal components for which
+        the cumulative explained variance is above the threshold.
+        :param threshold: threshold for the cumulative explained variance
+        :return: number of principal components
+        """
+        cumulative_explained_vars = 0
+        explained_vars = self.explained_variance()
+
+        for i in range(len(self.eigenvalues)):
+            cumulative_explained_vars += explained_vars[i]
+            if cumulative_explained_vars > threshold:
+                return i + 1
+        return len(self.eigenvalues)

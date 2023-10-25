@@ -42,6 +42,7 @@ def keep_features(
     features_to_keep: Union[str, list[str]],
     features: list[str],
     feature_index: dict,
+    verbose: bool = True,
 ):
     """
     Keep only the feature(s) specified in features_to_keep.
@@ -65,7 +66,8 @@ def keep_features(
     assert len(features) == data.shape[1]
     feature_index = {feature: index for index, feature in enumerate(features)}
 
-    print(f"Kept {len(features_to_keep)} features: {features_to_keep}")
+    if verbose:
+        print(f"Kept {len(features_to_keep)} features: {features_to_keep}")
 
     return data, features, feature_index
 
