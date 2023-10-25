@@ -167,6 +167,93 @@ EXERCISE_FEATURES: List[Feature] = [
     Feature("_PASTRNG", FeatureType.BOOL),
 ]
 
+IMMUNIZATION: List[Feature] = [
+    Feature("FLUSHOT6", FeatureType.BOOL),
+    Feature("PNEUVAC3", FeatureType.BOOL),
+]
+
+AIDS: List[Feature] = [
+    Feature("HIVTST6", FeatureType.BOOL),
+]
+
+DIABETES: List[Feature] = [
+    Feature("PREDIAB1", FeatureType.RANGE, max_value=3),
+    Feature("INSULIN", FeatureType.BOOL),
+    Feature("DOCTDIAB", FeatureType.RANGE, max_value=76, map_values={88: 0}),
+    Feature("CHKHEMO3", FeatureType.RANGE, max_value=76, map_values={88: 0, 98: 0}),
+    Feature("FEETCHK", FeatureType.RANGE, max_value=76, map_values={88: 0}),
+    Feature("DIABEYE", FeatureType.BOOL),
+]
+
+COGNITIVE_DECLINE: List[Feature] = [
+    Feature("CIMEMLOS", FeatureType.BOOL),
+    Feature("CDASSIST", FeatureType.RANGE, max_value=5),
+
+]
+
+ASTHMA: List[Feature] = [
+    Feature("ASATTACK", FeatureType.BOOL),
+    Feature("ASERVIST", FeatureType.RANGE, max_value=87, map_values={88: 0}),
+    Feature("ASTHMED3", FeatureType.RANGE, max_value=3, map_values={8: 0}),
+]
+
+CARDIOVASCULAR: List[Feature] = [
+    Feature("HAREHAB1", FeatureType.BOOL),
+    Feature("STREHAB1", FeatureType.BOOL),
+    Feature("CVDASPRN", FeatureType.BOOL),
+    Feature("RLIVPAIN", FeatureType.BOOL, map_values={2: 1, 1: 2}),
+    Feature("RDUCHART", FeatureType.BOOL),
+    Feature("RDUCSTRK", FeatureType.BOOL),
+
+]
+
+ARTHRITIS: List[Feature] = [
+    Feature("ARTHWGT", FeatureType.BOOL),
+    Feature("ARTHEXER", FeatureType.BOOL),
+]
+
+CANCER_SCREENING: List[Feature] = [
+    Feature("HADMAM", FeatureType.BOOL),
+    Feature("HADPAP2", FeatureType.BOOL),
+    Feature("HPVTEST", FeatureType.BOOL),
+    Feature("HADHYST2", FeatureType.BOOL),
+    Feature("PROFEXAM", FeatureType.BOOL),
+    Feature("BLDSTOOL", FeatureType.BOOL),
+    Feature("LSTBLDS3", FeatureType.RANGE, max_value=5),
+    Feature("HADSIGM3", FeatureType.BOOL),
+    Feature("LASTSIG3", FeatureType.RANGE, max_value=6),
+    Feature("PCPSARE1", FeatureType.BOOL),
+    Feature("PSATEST1", FeatureType.BOOL),
+    Feature("PSATIME", FeatureType.RANGE, max_value=5),
+]
+
+SOCIAL_CONTEXT: List[Feature] = [
+    Feature("SCNTMNY1", FeatureType.RANGE, max_value=5, nan_aliases=[7, 8, 9]),
+    Feature("SCNTMEL1", FeatureType.RANGE, max_value=5, nan_aliases=[7, 8, 9]),
+    Feature("SCNTWRK1", FeatureType.NUMERIC, map_values={88: 0}),
+]
+
+ANXIETY_DEPRESSION: List[Feature] = [
+    Feature("ADDOWN", FeatureType.RANGE, max_value=14, map_values={88: 0}),
+    Feature("ADSLEEP", FeatureType.RANGE, max_value=14, map_values={88: 0}),
+    Feature("ADEAT1", FeatureType.RANGE, max_value=14, map_values={88: 0}),
+    Feature("MISTMNT", FeatureType.BOOL),
+    Feature("ADANXEV", FeatureType.BOOL),
+]
+
+MISC_CALCULATED_VARIABLES: List[Feature] = [
+    Feature("_RFHYPE5", FeatureType.BOOL),
+    Feature("_CHOLCHK", FeatureType.RANGE, max_value=3),
+    Feature("_RFCHOL", FeatureType.BOOL),
+    Feature("_LTASTH1", FeatureType.BOOL),
+    Feature("_CASTHM1", FeatureType.BOOL),
+    Feature("_ASTHMS1", FeatureType.RANGE, max_value=3),
+    Feature("_DRDXAR1", FeatureType.BOOL),
+    Feature("_LMTACT1", FeatureType.RANGE, max_value=3),
+    Feature("_FLSHOT6", FeatureType.BOOL),
+    Feature("_PNEUMO2", FeatureType.BOOL),
+]
+
 FEATURES_DICT: Dict[str, Feature] = {
     f.feature_name: f
     for f in HEALTH_FEATURES
@@ -178,6 +265,17 @@ FEATURES_DICT: Dict[str, Feature] = {
     + ALCOHOL_FEATURES
     + FRUIT_FEATURES
     + EXERCISE_FEATURES
+    + IMMUNIZATION
+    + AIDS
+    + DIABETES
+    + COGNITIVE_DECLINE
+    + ASTHMA
+    + CARDIOVASCULAR
+    + ARTHRITIS
+    + CANCER_SCREENING
+    + SOCIAL_CONTEXT
+    + ANXIETY_DEPRESSION
+    + MISC_CALCULATED_VARIABLES
 }
 
 FEATURES_BY_CATEGORY = {
@@ -190,6 +288,17 @@ FEATURES_BY_CATEGORY = {
     "ALCOHOL_FEATURES": ALCOHOL_FEATURES,
     "FRUIT_FEATURES": FRUIT_FEATURES,
     "EXERCISE_FEATURES": EXERCISE_FEATURES,
+    "IMMUNIZATION": IMMUNIZATION,
+    "AIDS": AIDS,
+    "DIABETES": DIABETES,
+    "COGNITIVE_DECLINE": COGNITIVE_DECLINE,
+    "ASTHMA": ASTHMA,
+    "CARDIOVASCULAR": CARDIOVASCULAR,
+    "ARTHRITIS": ARTHRITIS,
+    "CANCER_SCREENING": CANCER_SCREENING,
+    "SOCIAL_CONTEXT": SOCIAL_CONTEXT,
+    "ANXIETY_DEPRESSION": ANXIETY_DEPRESSION,
+    "MISC_CALCULATED_VARIABLES": MISC_CALCULATED_VARIABLES,
 }
 
 ####### Features NaN Replacement #######
@@ -231,7 +340,10 @@ NAN_REPL_DEMOGRAPHICS: Dict = {  # 'SEX': ,
     "_BMI5": "mean",
 }
 
-NAN_REPL_TOBACCO: Dict = {"_SMOKER3": 4, "USENOW3": 3}
+NAN_REPL_TOBACCO: Dict = {
+    "_SMOKER3": 4,
+    "USENOW3": 3
+}
 
 NAN_REPL_ALCOHOL: Dict = {
     "DRNKANY5": "mean",
@@ -257,21 +369,21 @@ NAN_REPL_FRUIT: Dict = {
 NAN_REPL_EXERCISE: Dict = {
     "_TOTINDA": 1,
     "METVL11_": "mean",
-    "METVL21_": "median",  # TODO: put mean again, this is just a test
+    "METVL21_": "mean",
     "MAXVO2_": "mean",
     "ACTIN11_": 1,
     "ACTIN21_": 1,
-    "PADUR1_": "mean",  # maybe median is better
-    "PADUR2_": "mean",  # maybe median is better
-    "PAFREQ1_": "mean",  # maybe median is better
-    "PAFREQ2_": "mean",  # maybe median is better
-    "_MINAC11": "mean",  # maybe median is better
-    "_MINAC21": "mean",  # maybe median is better
-    "STRFREQ_": "mean",  # maybe median is better
-    "PA1MIN_": "mean",  # maybe median is better
-    "PAVIG11_": "mean",  # maybe median is better
-    "PAVIG21_": "mean",  # maybe median is better
-    "PA1VIGM_": "mean",  # maybe median is better
+    "PADUR1_": "median",
+    "PADUR2_": "median",
+    "PAFREQ1_": "median",
+    "PAFREQ2_": "median",
+    "_MINAC11": "median",
+    "_MINAC21": "median",
+    "STRFREQ_": "median",
+    "PA1MIN_": "median",
+    "PAVIG11_": "median",
+    "PAVIG21_": "median",
+    "PA1VIGM_": "median",
     "_PACAT1": 4,
     "_PAINDX1": 2,
     "_PA150R2": 3,
@@ -279,6 +391,93 @@ NAN_REPL_EXERCISE: Dict = {
     "_PA30021": 2,
     "_PASTRNG": 2,
 }
+
+NAN_REPL_IMMUNIZATION: Dict = {
+    "FLUSHOT6": 2,
+    "PNEUVAC3": 2
+}
+
+NAN_REPL_AIDS: Dict = {
+    "HIVTST6": 2
+}
+
+NAN_REPL_DIABETES: Dict = {
+    "PREDIAB1": 3,
+    "INSULIN": 2,
+    "DOCTDIAB": 0,
+    "CHKHEMO3": 0,
+    "FEETCHK": 0,
+    "DIABEYE": 2
+}
+
+NAN_REPL_COGNITIVE_DECLINE: Dict = {
+    "CIMEMLOS": 2,
+    "CDASSIST": 5
+}
+
+NAN_REPL_ASTHMA: Dict = {
+    "ASATTACK": 2,
+    "ASERVIST": 0,
+    "ASTHMED3": 0,
+}
+
+NAN_REPL_CARDIOVASCULAR: Dict = {
+    "HAREHAB1": 0,
+    "STREHAB1": 0,
+    "CVDASPRN": 0,
+    "RLIVPAIN": 0,
+    "RDUCHART": 0,
+    "RDUCSTRK": 0,
+}
+
+
+NAN_REPL_ARTHRITIS: Dict = {
+    "ARTHWGT": 2,
+    "ARTHEXER": 2,
+}
+
+NAN_REPL_CANCER_SCREENING: Dict = {
+    "HADMAM" : 2,
+    "HADPAP2" : 2,
+    "HPVTEST" : 2,
+    "HADHYST2" : 2,
+    "PROFEXAM" : 2,
+    "BLDSTOOL" : 2,
+    "LSTBLDS3" : 5,
+    "HADSIGM3" : 2,
+    "LASTSIG3" : 6,
+    "PCPSARE1" : 2,
+    "PSATEST1" : 2,
+    "PSATIME" : 2,
+}
+
+NAN_REPL_SOCIAL_CONTEXT: Dict = {
+    "SCNTMNY1" : "median",
+    "SCNTMEL1" : "median",
+    "SCNTWRK1" : "median",
+}
+
+NAN_REPL_ANXIETY_DEPRESSION: Dict = {
+    "ADDOWN": 0,
+    "ADSLEEP": 0,
+    "ADEAT1": 0,
+    "MISTMNT": 2,
+    "ADANXEV": 2,
+}
+
+NAN_REPL_MISC_CALCULATED_VARIABLES: Dict = {
+    "RFHYPE5": 1,
+    "_CHOLCHK": 3,
+    "_RFCHOL": "mean",
+    "_LTASTH1": 1,
+    "_CASTHM1": 1,
+    "_ASTHMS1": 3,
+    "_DRDXAR1": 2,
+    "_LMTACT1": 3,
+    "_FLSHOT6": 2,
+    "_PNEUMO2": 2,
+}
+
 
 REPLACEMENT_DICT: Dict = {
     **NAN_REPL_HEALTH,
@@ -290,6 +489,17 @@ REPLACEMENT_DICT: Dict = {
     **NAN_REPL_ALCOHOL,
     **NAN_REPL_FRUIT,
     **NAN_REPL_EXERCISE,
+    **NAN_REPL_IMMUNIZATION,
+    **NAN_REPL_AIDS,
+    **NAN_REPL_DIABETES,
+    **NAN_REPL_COGNITIVE_DECLINE,
+    **NAN_REPL_ASTHMA,
+    **NAN_REPL_CARDIOVASCULAR,
+    **NAN_REPL_ARTHRITIS,
+    **NAN_REPL_CANCER_SCREENING,
+    **NAN_REPL_SOCIAL_CONTEXT,
+    **NAN_REPL_ANXIETY_DEPRESSION,
+    **NAN_REPL_MISC_CALCULATED_VARIABLES,
 }
 
 REPLACEMENT_LIST: List[Tuple[List[str], Union[str, float]]] = [
