@@ -1,6 +1,5 @@
 import numpy as np
 
-from implementations import penalized_logistic_regression
 from implementations import logistic_loss, logistic_loss_gradient, batch_iter
 
 
