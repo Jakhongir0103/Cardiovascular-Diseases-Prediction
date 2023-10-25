@@ -239,8 +239,8 @@ def logistic_loss(y: np.ndarray,
     N = y.shape[0]
     reg = 0
     if _lambda is not None:
-        # reg = 0.5 * _lambda * np.sum(w ** 2)
-        reg = _lambda * np.sum(w ** 2)
+        reg = 0.5 * _lambda * np.sum(w ** 2)
+        # reg = _lambda * np.sum(w ** 2)
 
     return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
     # if neg_class == 0:
@@ -257,7 +257,7 @@ def logistic_loss_gradient(y: np.ndarray,
                            _lambda: float = None) -> np.ndarray:
     """
     Compute the gradient of loss for logistic regression, with or without regularization,
-    and with classes represented as (0, 1) or (-1, 1).
+    and with classes represented as (0, 1).
     :param  y:  shape=(N, 1)
     :param  tx: shape=(N, D)
     :param  w:  shape=(D, 1)

@@ -1,12 +1,9 @@
 # lists of features to use
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 from enum import Enum
-
-from pydantic.config import Union
 
 
 class FeatureType(Enum):
-
     BOOL = 5  #
     NUMERIC = 6
     FLAG = 7  # 0, 1 valid data
@@ -20,6 +17,7 @@ class Feature:
         feature_type: FeatureType,
         max_value: int = None,
         nan_aliases: List[int] = None,
+        map_values: Dict[int, int] = None,
     ):
 
         self.feature_name = feature_name
@@ -30,40 +28,49 @@ class Feature:
 
         if nan_aliases is None:
             nan_aliases = []
+        if map_values is None:
+            map_values = {}
 
-        self.nan_alieses: List[int]
+        self.map_values = map_values
+        self.nan_aliases: List[int]
         if feature_type == FeatureType.BOOL:
-            self.nan_alieses = [7, 9] + nan_aliases
-        elif feature_type == FeatureType.FLAG:
-            self.nan_alieses = nan_aliases
-        elif feature_type == FeatureType.NUMERIC:
-            self.nan_alieses = nan_aliases
+            self.nan_aliases = [7, 9] + nan_aliases
+        else:
+            self.nan_aliases = nan_aliases
 
     def __repr__(self):
         return self.feature_name
 
     def isnan(self, v):
-        is_valid: bool = v not in self.nan_alieses
+        is_valid: bool = v not in self.nan_aliases
 
         if self.feature_type == FeatureType.BOOL:
-            return v in {1, 2} and is_valid
+            return not (v in {1, 2} and is_valid)
         elif self.feature_type == FeatureType.RANGE:
-            return v <= self.max_value and is_valid
+            return not (v <= self.max_value and is_valid)
         elif self.feature_type == FeatureType.NUMERIC:
-            return is_valid
+            return not is_valid
 
+
+####### Features Static Info #######
 
 HEALTH_FEATURES: List[Feature] = [
     Feature("GENHLTH", FeatureType.RANGE, max_value=5),
-    Feature("PHYSHLTH", FeatureType.RANGE, max_value=30),
-    Feature("MENTHLTH", FeatureType.RANGE, max_value=30),
-    Feature("POORHLTH", FeatureType.RANGE, max_value=30),
-]
+    Feature(
+        "PHYSHLTH", FeatureType.RANGE, max_value=30, map_values={88: 0}
+    ),  # 88 means 0
+    Feature(
+        "MENTHLTH", FeatureType.RANGE, max_value=30, map_values={88: 0}
+    ),  # 88 means 0
+    Feature("POORHLTH", FeatureType.RANGE, max_value=30, map_values={88: 0}),
+]  # 88 means 0
 
 HEALTHCARE_FEATURES: List[Feature] = [
     Feature("PERSDOC2", FeatureType.RANGE, max_value=3),
     Feature("MEDCOST", FeatureType.BOOL),
-    Feature("CHECKUP1", FeatureType.RANGE, max_value=5),
+    Feature(
+        "CHECKUP1", FeatureType.RANGE, max_value=5, map_values={8: 5}
+    ),  # 8 means never so put to 5
     Feature("_HCVU651", FeatureType.BOOL),
 ]
 
@@ -81,16 +88,20 @@ CHRONIC_FEATURES: List[Feature] = [
     Feature("_DRDXAR1", FeatureType.BOOL),
     Feature("ADDEPEV2", FeatureType.BOOL),
     Feature("CHCKIDNY", FeatureType.BOOL),
-    Feature("DIABETE3", FeatureType.RANGE, max_value=5),
+    # inverted 3 and 4 (pre-diabetes worse than no diabetes)
+    Feature("DIABETE3", FeatureType.RANGE, max_value=5, map_values={4: 3, 3: 4}),
     Feature("DIABAGE2", FeatureType.RANGE, max_value=97),
 ]
 
 DEMOGRAPHICS_FEATURES: List[Feature] = [
     Feature("SEX", FeatureType.BOOL),
     Feature("_AGE80", FeatureType.NUMERIC),
-    Feature("MARITAL", FeatureType.RANGE, max_value=6),
-    Feature("_CHLDCNT", FeatureType.RANGE, max_value=97),
-    Feature("_EDUCAG", FeatureType.RANGE, max_value=5),
+    # changed the order to: married, couple, unmarried, separated, divorced, widowed
+    Feature(
+        "MARITAL", FeatureType.RANGE, max_value=6, map_values={6: 2, 5: 3, 2: 5, 3: 6}
+    ),
+    Feature("_CHLDCNT", FeatureType.RANGE, max_value=6),
+    Feature("_EDUCAG", FeatureType.RANGE, max_value=4),
     Feature("_INCOMG", FeatureType.RANGE, max_value=5),
     Feature("PREGNANT", FeatureType.BOOL),
     Feature("QLACTLM2", FeatureType.BOOL),
@@ -105,7 +116,7 @@ DEMOGRAPHICS_FEATURES: List[Feature] = [
 ]
 
 TOBACCO_FEATURES: List[Feature] = [
-    Feature("_SMOKER3", FeatureType.RANGE, max_value=5),
+    Feature("_SMOKER3", FeatureType.RANGE, max_value=4),
     Feature("USENOW3", FeatureType.RANGE, max_value=3),
 ]
 
@@ -124,23 +135,23 @@ FRUIT_FEATURES: List[Feature] = [
     Feature("GRENDAY_", FeatureType.NUMERIC),
     Feature("ORNGDAY_", FeatureType.NUMERIC),
     Feature("VEGEDA1_", FeatureType.NUMERIC),
-    Feature("_MISFRTN", FeatureType.NUMERIC),
-    Feature("_MISVEGN", FeatureType.NUMERIC),
+    Feature("_MISFRTN", FeatureType.RANGE, max_value=2),  # do we need this?
+    Feature("_MISVEGN", FeatureType.RANGE, max_value=4),  # do we need this?
     Feature("_FRUTSUM", FeatureType.NUMERIC),
     Feature("_VEGESUM", FeatureType.NUMERIC),
-    Feature("_FRTLT1", FeatureType.NUMERIC),
-    Feature("_VEGLT1", FeatureType.BOOL),
-    Feature("_FRT16", FeatureType.FLAG),
+    # Feature("_FRTLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
+    # Feature("_VEGLT1", FeatureType.BOOL), # commented in NAN_REPL_FRUIT
+    Feature("_FRT16", FeatureType.FLAG),  # do we need this?
     Feature("_VEG23", FeatureType.FLAG),
-]
+]  # do we need this?
 
 EXERCISE_FEATURES: List[Feature] = [
     Feature("_TOTINDA", FeatureType.BOOL),
     Feature("METVL11_", FeatureType.NUMERIC),
     Feature("METVL21_", FeatureType.NUMERIC),
     Feature("MAXVO2_", FeatureType.NUMERIC, nan_aliases=[99900]),
-    Feature("ACTIN11_", FeatureType.NUMERIC),
-    Feature("ACTIN21_", FeatureType.NUMERIC),
+    Feature("ACTIN11_", FeatureType.RANGE, max_value=2),
+    Feature("ACTIN21_", FeatureType.RANGE, max_value=2),
     Feature("PADUR1_", FeatureType.NUMERIC),
     Feature("PADUR2_", FeatureType.NUMERIC),
     Feature("PAFREQ1_", FeatureType.NUMERIC, nan_aliases=[99900]),
@@ -152,7 +163,7 @@ EXERCISE_FEATURES: List[Feature] = [
     Feature("PAVIG11_", FeatureType.NUMERIC),
     Feature("PAVIG21_", FeatureType.NUMERIC),
     Feature("PA1VIGM_", FeatureType.NUMERIC),
-    Feature("_PACAT1", FeatureType.RANGE, max_value=5),
+    Feature("_PACAT1", FeatureType.RANGE, max_value=4),
     Feature("_PAINDX1", FeatureType.BOOL),
     Feature("_PA150R2", FeatureType.RANGE, max_value=3),
     Feature("_PA300R2", FeatureType.RANGE, max_value=3),
@@ -173,91 +184,123 @@ FEATURES_DICT: Dict[str, Feature] = {
     + EXERCISE_FEATURES
 }
 
-# HEALTH_FEATURES: Dict[str, FeatureType] = {"GENHLTH": FeatureType.RANGE1_5,
-#                                           "PHYSHLTH": FeatureType.RANGE1_30,
-#                                           "MENTHLTH": FeatureType.RANGE1_30,
-#                                           "POORHLTH": FeatureType.RANGE1_30}
+FEATURES_BY_CATEGORY = {
+    "HEALTH_FEATURES": HEALTH_FEATURES,
+    "HEALTHCARE_FEATURES": HEALTHCARE_FEATURES,
+    "HYPERTENSION_FEATURES": HYPERTENSION_FEATURES,
+    "CHRONIC_FEATURES": CHRONIC_FEATURES,
+    "DEMOGRAPHICS_FEATURES": DEMOGRAPHICS_FEATURES,
+    "TOBACCO_FEATURES": TOBACCO_FEATURES,
+    "ALCOHOL_FEATURES": ALCOHOL_FEATURES,
+    "FRUIT_FEATURES": FRUIT_FEATURES,
+    "EXERCISE_FEATURES": EXERCISE_FEATURES,
+}
 
-# HEALTHCARE_FEATURES: Dict[str, FeatureType] = {"PERSDOC2": FeatureType.RANGE1_3,  # Look
-#                                               "MEDCOST": FeatureType.BOOL,
-#                                               "CHECKUP1": FeatureType.RANGE1_5,  # Look
-#                                               "_HCVU651": FeatureType.BOOL}
+####### Features NaN Replacement #######
 
-# HYPERTENSION_FEATURES: Dict[str, FeatureType] = {"_CHOLCHK": FeatureType.RANGE1_3,
-#                                                 "_RFCHOL": FeatureType.BOOL}
+NAN_REPL_HEALTH: Dict = {"GENHLTH": "mean", "PHYSHLTH": 0, "MENTHLTH": 0, "POORHLTH": 0}
 
-# CHRONIC_FEATURES: Dict[str, FeatureType] = {"CVDSTRK3": FeatureType.BOOL,
-#                                            "_ASTHMS1": FeatureType.RANGE1_3,
-#                                            "CHCSCNCR": FeatureType.BOOL,
-#                                            "CHCOCNCR": FeatureType.BOOL,
-#                                            "CHCCOPD1": FeatureType.BOOL,
-#                                            "_DRDXAR1": FeatureType.BOOL,
-#                                            "ADDEPEV2": FeatureType.BOOL,
-#                                            "CHCKIDNY": FeatureType.BOOL,
-#                                            "DIABETE3": FeatureType.RANGE1_5,
-#                                            "DIABAGE2": FeatureType.RANGE1_97}
+NAN_REPL_HEALTHCARE: Dict = {"PERSDOC2": 3, "MEDCOST": 2, "CHECKUP1": 5, "_HCVU651": 0}
 
-# DEMOGRAPHICS_FEATURES: Dict[str, FeatureType] = {"SEX": FeatureType.BOOL,
-#                                                 "_AGE80": FeatureType.NUMERIC,
-#                                                 "MARITAL": FeatureType.RANGE1_6,
-#                                                 "_CHLDCNT": FeatureType.RANGE1_97,
-#                                                 "_EDUCAG": FeatureType.RANGE1_5,
-#                                                 "_INCOMG": FeatureType.RANGE1_5,
-#                                                 "PREGNANT": FeatureType.BOOL,
-#                                                 "QLACTLM2": FeatureType.BOOL,
-#                                                 "USEEQUIP": FeatureType.BOOL,
-#                                                 "DECIDE": FeatureType.BOOL,
-#                                                 "DIFFWALK": FeatureType.BOOL,
-#                                                 "DIFFDRES": FeatureType.BOOL,
-#                                                 "DIFFALON": FeatureType.BOOL,
-#                                                 "HTM4": FeatureType.NUMERIC,
-#                                                 "WTKG3": FeatureType.NUMERIC,  # WARN: 99999 is NAN
-#                                                 "_BMI5": FeatureType.NUMERIC}
+NAN_REPL_HYPERTENSION: Dict = {"_CHOLCHK": 0, "_RFCHOL": 0}  # Note: 13% of NaNs
 
-# TOBACCO_FEATURES: Dict[str, FeatureType] = {"_SMOKER3": FeatureType.RANGE1_5,
-#                                            "USENOW3": FeatureType.RANGE1_3}
+NAN_REPL_CHRONIC: Dict = {
+    "CVDSTRK3": 0,
+    "_ASTHMS1": 2,
+    "CHCSCNCR": 2,
+    "CHCOCNCR": 2,
+    "CHCCOPD1": 2,
+    "_DRDXAR1": 2,
+    "ADDEPEV2": 2,
+    "CHCKIDNY": 2,
+    "DIABETE3": 2,
+    "DIABAGE2": "mean",
+}
 
-# ALCOHOL_FEATURES: Dict[str, FeatureType] = {"DRNKANY5": FeatureType.BOOL,
-#                                            "DROCDY3_": FeatureType.NUMERIC, # WARN 900 is nan
-#                                            "_RFBING5": FeatureType.BOOL,
-#                                            "_DRNKWEK": FeatureType.NUMERIC, # WARN 99900 is nan
-#                                            "_RFDRHV5": FeatureType.BOOL}
+NAN_REPL_DEMOGRAPHICS: Dict = {  # 'SEX': ,
+    # '_AGE80': ,
+    "MARITAL": "mean",
+    "_CHLDCNT": "mean",
+    "_EDUCAG": "mean",
+    "_INCOMG": "mean",
+    "PREGNANT": 2,
+    "QLACTLM2": 2,
+    "USEEQUIP": 2,
+    "DECIDE": 2,
+    "DIFFWALK": 2,
+    "DIFFDRES": 2,
+    "DIFFALON": 2,
+    "HTM4": "mean",
+    "WTKG3": "mean",
+    "_BMI5": "mean",
+}
 
-# FRUIT_FEATURES: Dict[str, FeatureType] = {"FTJUDA1_": FeatureType.NUMERIC,
-#                                          "FRUTDA1_": FeatureType.NUMERIC,
-#                                          "BEANDAY_": FeatureType.NUMERIC,
-#                                          "GRENDAY_": FeatureType.NUMERIC,
-#                                          "ORNGDAY_": FeatureType.NUMERIC,
-#                                          "VEGEDA1_": FeatureType.NUMERIC,
-#                                          "_MISFRTN": FeatureType.NUMERIC,
-#                                          "_MISVEGN": FeatureType.NUMERIC,
-#                                          "_FRUTSUM": FeatureType.NUMERIC,
-#                                          "_VEGESUM": FeatureType.NUMERIC,
-#                                          "_FRTLT1": FeatureType.NUMERIC,
-#                                          "_VEGLT1": FeatureType.BOOL,
-#                                          "_FRT16":  FeatureType.FLAG,
-#                                          "_VEG23": FeatureType.FLAG}
+NAN_REPL_TOBACCO: Dict = {"_SMOKER3": 4, "USENOW3": 3}
 
-# EXERCISE_FEATURES: Dict[str, FeatureType] = {"_TOTINDA": FeatureType.BOOL,
-#                                             "METVL11_": FeatureType.NUMERIC,
-#                                             "METVL21_": FeatureType.NUMERIC,
-#                                             "MAXVO2_": FeatureType.NUMERIC,  # warn 99900 is nan
-#                                             "ACTIN11_": FeatureType.NUMERIC,
-#                                             "ACTIN21_": FeatureType.NUMERIC,
-#                                             "PADUR1_": FeatureType.NUMERIC,
-#                                             "PADUR2_": FeatureType.NUMERIC,
-#                                             "PAFREQ1_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "PAFREQ2_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "_MINAC11": FeatureType.NUMERIC,
-#                                             "_MINAC21": FeatureType.NUMERIC,
-#                                             "STRFREQ_": FeatureType.NUMERIC, # warn 99900 is nan
-#                                             "PA1MIN_": FeatureType.NUMERIC,
-#                                             "PAVIG11_": FeatureType.NUMERIC,
-#                                             "PAVIG21_": FeatureType.NUMERIC,
-#                                             "PA1VIGM_": FeatureType.NUMERIC,
-#                                             "_PACAT1": FeatureType.RANGE1_5,
-#                                             "_PAINDX1": FeatureType.BOOL,
-#                                             "_PA150R2": FeatureType.RANGE1_3,
-#                                             "_PA300R2": FeatureType.RANGE1_3,
-#                                             "_PA30021": FeatureType.BOOL,
-#                                             "_PASTRNG": FeatureType.BOOL}
+NAN_REPL_ALCOHOL: Dict = {
+    "DRNKANY5": "mean",
+    "DROCDY3_": "mean",
+    "_RFBING5": 1,
+    "_DRNKWEK": "mean",
+    "_RFDRHV5": 1,
+}
+
+NAN_REPL_FRUIT: Dict = {
+    "FTJUDA1_": "mean",
+    "FRUTDA1_": "mean",
+    "BEANDAY_": "mean",
+    "GRENDAY_": "mean",
+    "ORNGDAY_": "mean",
+    "VEGEDA1_": "mean",
+    # '_MISFRTN': ,
+    # '_MISVEGN': ,
+    "_FRUTSUM": "mean",
+    "_VEGESUM": "mean",
+    # '_FRTLT1': ,
+    # '_VEGLT1': ,
+    # '_FRT16': ,
+    # '_VEG23':
+}
+
+NAN_REPL_EXERCISE: Dict = {
+    "_TOTINDA": 1,
+    "METVL11_": "mean",
+    "METVL21_": "median",  # TODO: put mean again, this is just a test
+    "MAXVO2_": "mean",
+    "ACTIN11_": 1,
+    "ACTIN21_": 1,
+    "PADUR1_": "mean",  # maybe median is better
+    "PADUR2_": "mean",  # maybe median is better
+    "PAFREQ1_": "mean",  # maybe median is better
+    "PAFREQ2_": "mean",  # maybe median is better
+    "_MINAC11": "mean",  # maybe median is better
+    "_MINAC21": "mean",  # maybe median is better
+    "STRFREQ_": "mean",  # maybe median is better
+    "PA1MIN_": "mean",  # maybe median is better
+    "PAVIG11_": "mean",  # maybe median is better
+    "PAVIG21_": "mean",  # maybe median is better
+    "PA1VIGM_": "mean",  # maybe median is better
+    "_PACAT1": 4,
+    "_PAINDX1": 2,
+    "_PA150R2": 3,
+    "_PA300R2": 2,
+    "_PA30021": 2,
+    "_PASTRNG": 2,
+}
+
+REPLACEMENT_DICT: Dict = {
+    **NAN_REPL_HEALTH,
+    **NAN_REPL_HEALTHCARE,
+    **NAN_REPL_HYPERTENSION,
+    **NAN_REPL_CHRONIC,
+    **NAN_REPL_DEMOGRAPHICS,
+    **NAN_REPL_TOBACCO,
+    **NAN_REPL_ALCOHOL,
+    **NAN_REPL_FRUIT,
+    **NAN_REPL_EXERCISE,
+}
+
+REPLACEMENT_LIST: List[Tuple[List[str], Union[str, float]]] = [
+    ([key for key in REPLACEMENT_DICT if REPLACEMENT_DICT[key] == v], v)
+    for v in set(REPLACEMENT_DICT.values())
+]

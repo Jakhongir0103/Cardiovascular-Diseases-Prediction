@@ -78,7 +78,7 @@ def split_train_validation(x: np.ndarray,
 
 def custom_random_oversampling(x, y):
     # Separate the majority and minority classes
-    majority_class = x[y == -1, :]
+    majority_class = x[y == 0, :]
     minority_class = x[y == 1, :]
 
     # Find the number of instances in each class
@@ -99,3 +99,18 @@ def custom_random_oversampling(x, y):
     y_resampled = np.hstack((-np.ones(num_majority), np.ones(num_minority + oversampled_minority.shape[0])))
 
     return x_resampled, y_resampled
+
+def change_negative_class(y: np.ndarray, current: int, new: int):
+    """
+    Replace a specified class label in an array with a new class label.
+
+    Args:
+    - y (numpy.ndarray): An array containing the original class labels.
+    - current: The class label you want to replace in the array.
+    - new: The new class label to replace the 'current' label.
+
+    Returns:
+    - numpy.ndarray: A new array with the same shape as 'y,' where occurrences of the 'current' label have been replaced with the 'new' label.
+
+    """
+    return np.where(y == current, new, y)
