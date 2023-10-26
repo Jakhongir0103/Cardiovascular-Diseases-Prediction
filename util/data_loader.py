@@ -88,7 +88,7 @@ def custom_random_oversampling(x, y):
     oversample_ratio = num_majority // num_minority
 
     # Randomly duplicate instances from the minority class
-    oversampled_minority_index = np.random.choice(minority_class.shape[0],
+    oversampled_minority_index = np.random.choice(num_minority,
                                                   size=num_minority * oversample_ratio - num_minority,
                                                   replace=True)
     oversampled_minority = minority_class[oversampled_minority_index, :]

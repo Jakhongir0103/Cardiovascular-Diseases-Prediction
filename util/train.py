@@ -75,19 +75,20 @@ def reg_logistic_regression(
                 beta = 0.9
                 gradients_sum += beta * gradients_sum + (1 - beta) * (gradient * gradient)
                 h_vect = np.sqrt(gradients_sum/(1 - beta**it))
-                w = w - (1/h_vect) * gamma * gradient
+                w = w - (1 / h_vect) * gamma * gradient
 
-            valid_loss = logistic_loss(y_valid, tx_valid, w, lambda_)
+            # do not include the regularization term
+            valid_loss = logistic_loss(y_valid, tx_valid, w, lambda_=None)
             if valid_loss < lowest_loss:
                 lowest_loss = valid_loss
                 best_w = w
 
         if all_losses: 
-            train_losses.append(logistic_loss(y_train, tx_train, w, lambda_))
-            valid_losses.append(logistic_loss(y_valid, tx_valid, w, lambda_))
+            train_losses.append(logistic_loss(y_train, tx_train, w, lambda_=None))
+            valid_losses.append(logistic_loss(y_valid, tx_valid, w, lambda_=None))
 
     if not all_losses:    
-        train_losses = logistic_loss(y_train, tx_train, best_w, lambda_)
+        train_losses = logistic_loss(y_train, tx_train, best_w, lambda_=None)
         valid_losses = lowest_loss
 
     return best_w, train_losses, valid_losses
