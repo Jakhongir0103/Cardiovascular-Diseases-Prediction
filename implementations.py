@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = "MSE"):
     """Calculate the loss using MSE or MAE.
 
@@ -88,7 +89,7 @@ def batch_iter(
         yield y[start_index:end_index], tx[start_index:end_index]
 
 
-def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray):
+def compute_gradient_mse(y: np.ndarray, tx: np.ndarray, w: np.ndarray):
     """Computes the gradient at w.
        Return the optimum w and loss(mse).
 
@@ -106,6 +107,7 @@ def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray):
     return grad
 
 
+# Required function
 def mean_squared_error_gd(
     y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float
 ):
@@ -117,7 +119,7 @@ def mean_squared_error_gd(
         tx: numpy array of shape=(N,D)
         initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
         max_iters: a scalar denoting the total number of iterations of GD
-        gamma: a scalar denoting the stepsize
+        gamma: a scalar denoting the step-size
 
     Returns:
         w: optimal weights, numpy array of shape(D,), D is the number of features.
@@ -126,13 +128,14 @@ def mean_squared_error_gd(
     w = initial_w
     for n_iter in range(max_iters):
         # compute gradient and loss
-        gradient = compute_gradient(y,tx,w)
+        gradient = compute_gradient_mse(y, tx, w)
         # update w
         w = w - gamma * gradient
-    loss = compute_loss(y,tx,w)
+    loss = compute_loss(y, tx, w)
     return w, loss
 
 
+# Required function
 def mean_squared_error_sgd(
     y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float
 ):
@@ -144,7 +147,7 @@ def mean_squared_error_sgd(
         tx: numpy array of shape=(N,D)
         initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
         max_iters: a scalar denoting the total number of iterations of SGD
-        gamma: a scalar denoting the stepsize
+        gamma: a scalar denoting the step-size
 
     Returns:
         w: optimal weights, numpy array of shape(D,), D is the number of features.
@@ -152,18 +155,17 @@ def mean_squared_error_sgd(
     """
     w = initial_w
     for n_iter in range(max_iters):
-        for mini_batch_y, mini_batch_tx in batch_iter(
-            y=y, tx=tx
-        ):
-            continue
-        # compute gradient on batch and loss
-        stochastic_grad = compute_gradient(mini_batch_y, mini_batch_tx, w)
-        # update w
-        w = w - gamma * stochastic_grad
+        for mini_batch_y, mini_batch_tx in batch_iter(y=y, tx=tx):
+            # compute gradient on batch and loss
+            stochastic_grad = compute_gradient_mse(mini_batch_y, mini_batch_tx, w)
+            # update w
+            w = w - gamma * stochastic_grad
     loss = compute_loss(y, tx, w)
+
     return w, loss
 
 
+# Required function
 def least_squares(y: np.ndarray, tx: np.ndarray):
     """Calculate the least squares solution.
        Return the optimum w and loss(mse).
@@ -183,6 +185,7 @@ def least_squares(y: np.ndarray, tx: np.ndarray):
     return w, loss
 
 
+# Required function
 def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: float):
     """implement ridge regression.
        Return the optimum w and loss(mse).
@@ -222,15 +225,15 @@ def sigmoid(t):
     return 1 / (1 + np.exp(-t))
 
 
-def logistic_loss(y: np.ndarray, 
-                  tx: np.ndarray, 
+def logistic_loss(y: np.ndarray,
+                  tx: np.ndarray,
                   w: np.ndarray,
-                  _lambda: float = None) -> float:
+                  lambda_: float = None) -> float:
     """Compute the cost by negative log likelihood.
     :param  y:  shape=(N, 1)
     :param  tx: shape=(N, D)
     :param  w:  shape=(D, 1)
-    :param  _lambda: regularization parameter
+    :param  lambda_: regularization parameter
     :return loss: scalar number
     """
     assert y.shape[0] == tx.shape[0]
@@ -238,8 +241,8 @@ def logistic_loss(y: np.ndarray,
 
     N = y.shape[0]
     reg = 0
-    if _lambda is not None:
-        reg = 0.5 * _lambda * np.sum(w ** 2)
+    if lambda_ is not None:
+        reg = 0.5 * lambda_ * np.sum(w ** 2)
         # reg = _lambda * np.sum(w ** 2)
 
     return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
@@ -281,6 +284,7 @@ def logistic_loss_gradient(y: np.ndarray,
     #     raise ValueError("neg_class must be either 0 or -1")
         
 
+# Required function
 def logistic_regression(y, tx, w, max_iter: int, gamma: float):
     """
     Logistic regression. 
@@ -305,17 +309,21 @@ def logistic_regression(y, tx, w, max_iter: int, gamma: float):
     loss = logistic_loss(y, tx, w)
     return w, loss
 
-def reg_logistic_regression(y, tx, lambda_, w, max_iter: int, gamma: float):
+
+# Required function
+def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float,
+                            w: np.ndarray, max_iter: int, gamma: float) -> (np.ndarray, float):
     """
     Regularized logistic regression using gradient descent. 
     Return the optimum w and loss.
 
     Args:
-        y:  shape=(N, 1)
-        tx: shape=(N, D)
-        w:  shape=(D, 1)
-        max_iter: int
-        gamma: float
+        y:  ground truth, shape=(N, 1)
+        tx: dataset matrix, shape=(N, D)
+        w:  initial weights, shape=(D, 1)
+        lambda_: regularization coefficient
+        max_iter: maximum number of iterates
+        gamma: step-size for descent
 
     Returns:
         w: optimal weights, numpy array of shape(D,), D is the number of features.
