@@ -168,3 +168,8 @@ def decision_threshold(
     plt.title("Accuracy and F1 score for different decision thresholds")
     plt.legend()
     plt.show()
+
+    f1_scores = np.array(f1_scores)
+    f1_scores = np.where(np.isnan(f1_scores), 0, f1_scores)
+
+    return thresholds[np.argmax(f1_scores)]
