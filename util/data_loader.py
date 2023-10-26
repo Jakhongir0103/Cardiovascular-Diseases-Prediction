@@ -4,7 +4,7 @@ import csv
 
 
 def load_dataset(
-        path_x_train: str, path_y_train: str, path_x_test: str, sub_sample: bool = False
+    path_x_train: str, path_y_train: str, path_x_test: str, sub_sample: bool = False
 ) -> (np.ndarray, np.ndarray, np.ndarray, List[str]):
     """
     Loads the dataset
@@ -32,9 +32,7 @@ def load_dataset(
     return x_train, y_train, x_test, features_names
 
 
-def create_csv_submission(ids: Union[List, np.ndarray],
-                          y_pred: np.ndarray,
-                          path: str):
+def create_csv_submission(ids: Union[List, np.ndarray], y_pred: np.ndarray, path: str):
     """
     This function creates a csv file named 'name' in the format required for a submission in Kaggle or AIcrowd.
     The file will contain two columns the first with 'ids' and the second with 'y_pred'.
@@ -57,10 +55,12 @@ def create_csv_submission(ids: Union[List, np.ndarray],
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
 
 
-def split_train_validation(x: np.ndarray,
-                           y: np.ndarray,
-                           valid_proportion: float) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
-    valid_index = np.random.choice(np.arange(x.shape[0]), size=int(x.shape[0] * valid_proportion), replace=False)
+def split_train_validation(
+    x: np.ndarray, y: np.ndarray, valid_proportion: float
+) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+    valid_index = np.random.choice(
+        np.arange(x.shape[0]), size=int(x.shape[0] * valid_proportion), replace=False
+    )
     x_train = x[~np.isin(np.arange(x.shape[0]), valid_index), :]
     x_valid = x[valid_index, :]
 
@@ -88,16 +88,21 @@ def custom_random_oversampling(x, y):
     oversample_ratio = num_majority // num_minority
 
     # Randomly duplicate instances from the minority class
-    oversampled_minority_index = np.random.choice(minority_class.shape[0],
-                                                  size=num_minority * oversample_ratio - num_minority,
-                                                  replace=True)
+    oversampled_minority_index = np.random.choice(
+        minority_class.shape[0],
+        size=num_minority * oversample_ratio - num_minority,
+        replace=True,
+    )
     oversampled_minority = minority_class[oversampled_minority_index, :]
 
     # Combine the oversampled minority class with the majority class
     x_resampled = np.vstack((majority_class, minority_class, oversampled_minority))
-    y_resampled = np.hstack((np.zeros(num_majority), np.ones(num_minority + oversampled_minority.shape[0])))
+    y_resampled = np.hstack(
+        (np.zeros(num_majority), np.ones(num_minority + oversampled_minority.shape[0]))
+    )
 
     return x_resampled, y_resampled
+
 
 def change_negative_class(y: np.ndarray, current: int, new: int):
     """

@@ -53,8 +53,7 @@ class CustomPCA:
         """
         return self.eigenvalues / np.sum(self.eigenvalues)
 
-    def _num_of_PCs(self,
-                    threshold: float) -> int:
+    def _num_of_PCs(self, threshold: float) -> int:
         """
         Returns the number of principal components for which
         the cumulative explained variance is above the threshold.

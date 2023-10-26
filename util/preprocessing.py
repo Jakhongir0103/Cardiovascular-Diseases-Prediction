@@ -166,6 +166,7 @@ def normalize_features(data: np.ndarray) -> np.ndarray:
 
     data_normalized = np.empty_like(data)
     for column in range(data.shape[1]):
-        data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (data[:, column].max() - data[:, column].min())
+        data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (
+            data[:, column].max() - data[:, column].min()
+        )
     return data_normalized
-
