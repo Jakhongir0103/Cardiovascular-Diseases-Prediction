@@ -119,7 +119,7 @@ def mean_squared_error_gd(
         tx: numpy array of shape=(N,D)
         initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
         max_iters: a scalar denoting the total number of iterations of GD
-        gamma: a scalar denoting the step-size
+        gamma: a scalar denoting the stepsize
 
     Returns:
         w: optimal weights, numpy array of shape(D,), D is the number of features.
@@ -214,7 +214,7 @@ def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: float):
 
 def sigmoid(t):
     """apply sigmoid function on t.
-    
+
     Args:
         t: scalar or numpy array
 
@@ -252,12 +252,11 @@ def logistic_loss(y: np.ndarray,
     #     return reg + np.sum(np.log(1 + np.exp(- y * (tx @ w)))) / N
     # else:
     #     raise ValueError("neg_class must be either 0 or -1")
-    
 
-def logistic_loss_gradient(y: np.ndarray,
-                           tx: np.ndarray,
-                           w: np.ndarray,
-                           _lambda: float = None) -> np.ndarray:
+
+def logistic_loss_gradient(
+    y: np.ndarray, tx: np.ndarray, w: np.ndarray, _lambda: float = None
+) -> np.ndarray:
     """
     Compute the gradient of loss for logistic regression, with or without regularization,
     and with classes represented as (0, 1).
@@ -273,7 +272,7 @@ def logistic_loss_gradient(y: np.ndarray,
     if _lambda is not None:
         # reg = _lambda * w
         reg = 2 * _lambda * w
-    
+
     return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
     # if neg_class == 0:
     #     return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
@@ -282,12 +281,12 @@ def logistic_loss_gradient(y: np.ndarray,
     #     return reg + np.sum((- y.reshape(-1, 1) * tx) * s, axis=0) / N
     # else:
     #     raise ValueError("neg_class must be either 0 or -1")
-        
+
 
 # Required function
 def logistic_regression(y, tx, w, max_iter: int, gamma: float):
     """
-    Logistic regression. 
+    Logistic regression.
     Return the optimum w and loss.
 
     Args:
@@ -314,7 +313,7 @@ def logistic_regression(y, tx, w, max_iter: int, gamma: float):
 def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float,
                             w: np.ndarray, max_iter: int, gamma: float) -> (np.ndarray, float):
     """
-    Regularized logistic regression using gradient descent. 
+    Regularized logistic regression using gradient descent.
     Return the optimum w and loss.
 
     Args:
@@ -328,7 +327,7 @@ def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float,
     Returns:
         w: optimal weights, numpy array of shape(D,), D is the number of features.
         loss: scalar.
-    """    
+    """
     # start the logistic regression
     for iter in range(max_iter):
         # get gradient and update w.
