@@ -1,6 +1,7 @@
 import numpy as np
 
-def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = 'MSE'):
+
+def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = "MSE"):
     """Calculate the loss using MSE or MAE.
 
     Args:
@@ -17,9 +18,9 @@ def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = 'MSE'
     N = y.shape[0]
 
     if loss == "MSE":
-        return 0.5 * np.power(err, 2).sum()/N
+        return 0.5 * np.power(err, 2).sum() / N
     elif loss == "MAE":
-        return np.sum(np.abs(y - np.matmul(tx, w)))/N
+        return np.sum(np.abs(y - np.matmul(tx, w))) / N
 
 
 def batch_iter(y, tx, batch_size=1, num_batches=1, shuffle=True):
@@ -56,15 +57,21 @@ def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str):
     err = y - np.matmul(tx, w)
 
     if loss == "MSE":
-        grad = -(np.matmul(tx.transpose(), err))/N
+        grad = -(np.matmul(tx.transpose(), err)) / N
     else:
         raise NotImplementedError
 
     return grad
 
 
-def gradient_descent(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float,
-                     loss_type: str ="MSE"):
+def gradient_descent(
+    y: np.ndarray,
+    tx: np.ndarray,
+    initial_w: np.ndarray,
+    max_iters: int,
+    gamma: float,
+    loss_type: str = "MSE",
+):
     """The Gradient Descent (GD) algorithm.
 
     Args:
@@ -89,7 +96,7 @@ def gradient_descent(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_i
         grad = compute_gradient(y, tx, w, loss_type)
         loss_val = compute_loss(y, tx, w, loss_type)
 
-        w = w - gamma*grad
+        w = w - gamma * grad
         # ***************************************************
 
         # store w and loss
@@ -102,6 +109,7 @@ def gradient_descent(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_i
         )
     return losses, ws
 
+
 def stochastic_gradient_descent(y, tx, initial_w, max_iters, gamma):
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -109,12 +117,12 @@ def stochastic_gradient_descent(y, tx, initial_w, max_iters, gamma):
     w = initial_w
 
     for n_iter in range(max_iters):
-        for yb, xb in batch_iter(y,tx):
+        for yb, xb in batch_iter(y, tx):
             # compute gradient on batch and loss
-            stochastic_grad=compute_gradient(yb,xb,w)
-            loss=compute_loss(yb,xb,w)
+            stochastic_grad = compute_gradient(yb, xb, w)
+            loss = compute_loss(yb, xb, w)
             # update w
-            w=w-gamma*stochastic_grad
+            w = w - gamma * stochastic_grad
 
             ws.append(w)
             losses.append(loss)
@@ -123,11 +131,12 @@ def stochastic_gradient_descent(y, tx, initial_w, max_iters, gamma):
 
 
 def least_squares(y, tx):
-    w_star = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
-    loss = compute_loss(y,tx,w_star)
+    w_star = np.linalg.solve(tx.T.dot(tx), tx.T.dot(y))
+    loss = compute_loss(y, tx, w_star)
     return w_star, loss
 
+
 def ridge_regression(y, tx, _lambda):
-    N = int(tx.size/tx.shape[0])
-    lambda__ = lambda_*2*N
-    return np.linalg.solve(tx.T.dot(tx)+lambda__*np.eye(N), tx.T.dot(y))
+    N = int(tx.size / tx.shape[0])
+    lambda__ = lambda_ * 2 * N
+    return np.linalg.solve(tx.T.dot(tx) + lambda__ * np.eye(N), tx.T.dot(y))

@@ -1,8 +1,7 @@
 import numpy as np
 
 
-def accuracy(true_labels: np.ndarray,
-             predicted_labels: np.ndarray) -> float:
+def accuracy(true_labels: np.ndarray, predicted_labels: np.ndarray) -> float:
     """
     Calculate the accuracy of a classifier.
     :param true_labels: True class labels.
@@ -17,9 +16,9 @@ def accuracy(true_labels: np.ndarray,
     return correct_predictions / total_samples
 
 
-def precision(true_labels: np.ndarray,
-              predicted_labels: np.ndarray,
-              negative_label: int = 0) -> float:
+def precision(
+    true_labels: np.ndarray, predicted_labels: np.ndarray, negative_label: int = 0
+) -> float:
     """
     Calculate the precision of a classifier.
     :param true_labels: True class labels.
@@ -33,9 +32,9 @@ def precision(true_labels: np.ndarray,
     return true_positives / (true_positives + false_positives)
 
 
-def recall(true_labels: np.ndarray,
-           predicted_labels: np.ndarray,
-           negative_label: int = 0) -> float:
+def recall(
+    true_labels: np.ndarray, predicted_labels: np.ndarray, negative_label: int = 0
+) -> float:
     """
     Calculate the recall of a classifier.
     :param true_labels: True class labels.
@@ -49,8 +48,7 @@ def recall(true_labels: np.ndarray,
     return true_positives / (true_positives + false_negatives)
 
 
-def f1_score(true_labels: np.ndarray,
-             predicted_labels: np.ndarray) -> float:
+def f1_score(true_labels: np.ndarray, predicted_labels: np.ndarray) -> float:
     """
     Calculate the F1 score of a classifier.
     :param true_labels: True class labels.
@@ -66,8 +64,7 @@ def f1_score(true_labels: np.ndarray,
     return 2 * (prec * rec) / (prec + rec)
 
 
-def evaluation_summary(true_labels: np.ndarray,
-                       predicted_labels: np.ndarray):
+def evaluation_summary(true_labels: np.ndarray, predicted_labels: np.ndarray):
     print(f"Accuracy: {accuracy(true_labels, predicted_labels):.2%}")
     print(f"Precision: {precision(true_labels, predicted_labels):.2%}")
     print(f"Recall: {recall(true_labels, predicted_labels):.2%}")

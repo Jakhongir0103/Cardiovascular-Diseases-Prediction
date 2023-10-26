@@ -188,7 +188,6 @@ DIABETES: List[Feature] = [
 COGNITIVE_DECLINE: List[Feature] = [
     Feature("CIMEMLOS", FeatureType.BOOL),
     Feature("CDASSIST", FeatureType.RANGE, max_value=5),
-
 ]
 
 ASTHMA: List[Feature] = [
@@ -204,7 +203,6 @@ CARDIOVASCULAR: List[Feature] = [
     Feature("RLIVPAIN", FeatureType.BOOL, map_values={2: 1, 1: 2}),
     Feature("RDUCHART", FeatureType.BOOL),
     Feature("RDUCSTRK", FeatureType.BOOL),
-
 ]
 
 ARTHRITIS: List[Feature] = [
@@ -340,10 +338,7 @@ NAN_REPL_DEMOGRAPHICS: Dict = {  # 'SEX': ,
     "_BMI5": "mean",
 }
 
-NAN_REPL_TOBACCO: Dict = {
-    "_SMOKER3": 4,
-    "USENOW3": 3
-}
+NAN_REPL_TOBACCO: Dict = {"_SMOKER3": 4, "USENOW3": 3}
 
 NAN_REPL_ALCOHOL: Dict = {
     "DRNKANY5": "mean",
@@ -392,14 +387,9 @@ NAN_REPL_EXERCISE: Dict = {
     "_PASTRNG": 2,
 }
 
-NAN_REPL_IMMUNIZATION: Dict = {
-    "FLUSHOT6": 2,
-    "PNEUVAC3": 2
-}
+NAN_REPL_IMMUNIZATION: Dict = {"FLUSHOT6": 2, "PNEUVAC3": 2}
 
-NAN_REPL_AIDS: Dict = {
-    "HIVTST6": 2
-}
+NAN_REPL_AIDS: Dict = {"HIVTST6": 2}
 
 NAN_REPL_DIABETES: Dict = {
     "PREDIAB1": 3,
@@ -407,13 +397,10 @@ NAN_REPL_DIABETES: Dict = {
     "DOCTDIAB": 0,
     "CHKHEMO3": 0,
     "FEETCHK": 0,
-    "DIABEYE": 2
+    "DIABEYE": 2,
 }
 
-NAN_REPL_COGNITIVE_DECLINE: Dict = {
-    "CIMEMLOS": 2,
-    "CDASSIST": 5
-}
+NAN_REPL_COGNITIVE_DECLINE: Dict = {"CIMEMLOS": 2, "CDASSIST": 5}
 
 NAN_REPL_ASTHMA: Dict = {
     "ASATTACK": 2,
@@ -437,24 +424,24 @@ NAN_REPL_ARTHRITIS: Dict = {
 }
 
 NAN_REPL_CANCER_SCREENING: Dict = {
-    "HADMAM" : 2,
-    "HADPAP2" : 2,
-    "HPVTEST" : 2,
-    "HADHYST2" : 2,
-    "PROFEXAM" : 2,
-    "BLDSTOOL" : 2,
-    "LSTBLDS3" : 5,
-    "HADSIGM3" : 2,
-    "LASTSIG3" : 6,
-    "PCPSARE1" : 2,
-    "PSATEST1" : 2,
-    "PSATIME" : 2,
+    "HADMAM": 2,
+    "HADPAP2": 2,
+    "HPVTEST": 2,
+    "HADHYST2": 2,
+    "PROFEXAM": 2,
+    "BLDSTOOL": 2,
+    "LSTBLDS3": 5,
+    "HADSIGM3": 2,
+    "LASTSIG3": 6,
+    "PCPSARE1": 2,
+    "PSATEST1": 2,
+    "PSATIME": 2,
 }
 
 NAN_REPL_SOCIAL_CONTEXT: Dict = {
-    "SCNTMNY1" : "median",
-    "SCNTMEL1" : "median",
-    "SCNTWRK1" : "median",
+    "SCNTMNY1": "median",
+    "SCNTMEL1": "median",
+    "SCNTWRK1": "median",
 }
 
 NAN_REPL_ANXIETY_DEPRESSION: Dict = {

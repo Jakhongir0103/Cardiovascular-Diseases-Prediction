@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def main():
     # Load the data
     raise NotImplementedError
@@ -19,5 +20,6 @@ def main():
     # Save predictions to a CSV file
     raise NotImplementedError
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

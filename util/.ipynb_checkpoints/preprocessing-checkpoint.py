@@ -4,21 +4,28 @@ from util.features_info import Feature, FeatureType, FEATURES_DICT, REPLACEMENT_
 import numpy as np
 
 
-def preprocessing_pipeline(x: np.ndarray,
-                           where: Union[str, List[str]],
-                           feature_index: Dict[str, int],
-                           nan_replacement: List[Tuple[List[str], Union[float, str]]] = None) -> np.ndarray:
+def preprocessing_pipeline(
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
+) -> np.ndarray:
     prepro_df = align_nans(map_values(x, where, feature_index), where, feature_index)
     if nan_replacement is not None:
         for (features_list, val) in nan_replacement:
-            prepro_df = set_nans_to_value(prepro_df, value=val, where=features_list, feature_index=feature_index)
+            prepro_df = set_nans_to_value(
+                prepro_df, value=val, where=features_list, feature_index=feature_index
+            )
 
     return prepro_df
 
 
-
-def set_nans_to_value(x: np.ndarray, value: Union[float, str], where: Union[str, List[str]],
-                      feature_index: Dict[str, int]) -> np.ndarray:
+def set_nans_to_value(
+    x: np.ndarray,
+    value: Union[float, str],
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+) -> np.ndarray:
     """
     Maps all the nan values to a specified value.
     Note: not inplace, dataset is copied.
@@ -49,10 +56,14 @@ def set_nans_to_value(x: np.ndarray, value: Union[float, str], where: Union[str,
 
         return np.nan_to_num(v, nan=replacement)
 
-    return _apply_preprocessing(x, where, feature_index, vectorized_operation=nan_replacer)
+    return _apply_preprocessing(
+        x, where, feature_index, vectorized_operation=nan_replacer
+    )
 
 
-def align_nans(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]) -> np.ndarray:
+def align_nans(
+    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+) -> np.ndarray:
     """
     Maps all the nan aliases to np.nan.
     Note: not inplace, dataset is copied!
@@ -62,11 +73,15 @@ def align_nans(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[
     :param feature_index: dictionary that maps feature names to the (column) index in the dataset x
     :return: (new) dataset after the preprocessing
     """
-    vectorized_nan_replacing = np.vectorize(lambda feature, v: v if not feature.isnan(v) else np.nan)
+    vectorized_nan_replacing = np.vectorize(
+        lambda feature, v: v if not feature.isnan(v) else np.nan
+    )
     return _apply_preprocessing(x, where, feature_index, vectorized_nan_replacing)
 
 
-def map_values(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]):
+def map_values(
+    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+):
     """
     Map values of feature(s) according to the pre-determined mapping.
     Note: not inplace, dataset is copied!
@@ -77,14 +92,21 @@ def map_values(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[
     :return: (new) dataset after the preprocessing
     """
 
-    vectorized_remapping = np.vectorize(lambda feature, v:
-                                        feature.map_values[v] if not np.isnan(v) and v in feature.map_values else v,
-                                        otypes=[np.float64])
+    vectorized_remapping = np.vectorize(
+        lambda feature, v: feature.map_values[v]
+        if not np.isnan(v) and v in feature.map_values
+        else v,
+        otypes=[np.float64],
+    )
     return _apply_preprocessing(x, where, feature_index, vectorized_remapping)
 
 
-def _apply_preprocessing(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int],
-                         vectorized_operation: Callable) -> np.ndarray:
+def _apply_preprocessing(
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    vectorized_operation: Callable,
+) -> np.ndarray:
     """
     Skeleton for vectorized-custom-preprocessing of the dataset.
     Note: not inplace, dataset is copied!

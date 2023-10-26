@@ -2,10 +2,9 @@ import numpy as np
 from implementations import sigmoid
 
 
-def predict(data: np.ndarray,
-            w: np.ndarray,
-            threshold: float,
-            negative_label: int = 0) -> np.ndarray:
+def predict(
+    data: np.ndarray, w: np.ndarray, threshold: float, negative_label: int = 0
+) -> np.ndarray:
     """
     Predict the labels of the data using the weights w.
     Note: remember to use data with offset column if the
@@ -22,8 +21,7 @@ def predict(data: np.ndarray,
     return np.where(sigmoid(data @ w) >= threshold, 1, negative_label)
 
 
-def predict_no_labels(data: np.ndarray,
-                      w: np.ndarray) -> np.ndarray:
+def predict_no_labels(data: np.ndarray, w: np.ndarray) -> np.ndarray:
     """
     Predict the output (NOT LABELS) of the data using the weights w.
     Note: remember to use data with offset column if the

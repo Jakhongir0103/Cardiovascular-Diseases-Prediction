@@ -6,6 +6,7 @@ import numpy as np
 from util.predict import predict
 from util.evaluation import accuracy, f1_score
 
+
 def multiple_hists(
     data: np.ndarray, columns: Union[str, List[str]], feature_index: Dict[str, int]
 ):
@@ -77,8 +78,10 @@ def correlation_matrix_dist(
                 axs[i, j].set_ylabel(columns[i], fontsize=14)
 
 
-def loss_visualization(train_loss: np.ndarray,
-                       validation_loss: np.ndarray,):
+def loss_visualization(
+    train_loss: np.ndarray,
+    validation_loss: np.ndarray,
+):
     """
     Plots the loss for the train and validation sets.
     :param train_loss: loss for the train set
@@ -108,27 +111,39 @@ def confusion_matrix(true_labels: np.ndarray, predicted_labels: np.ndarray):
 
     for i_idx, i in enumerate(classes):
         for j_idx, j in enumerate(classes):
-            cm[i_idx, j_idx] = 100 * np.sum((true_labels == i) & (predicted_labels == j)) / len(true_labels)
+            cm[i_idx, j_idx] = (
+                100
+                * np.sum((true_labels == i) & (predicted_labels == j))
+                / len(true_labels)
+            )
 
     # Create the confusion matrix heatmap
     plt.figure(figsize=(8, 6))
-    cax = plt.matshow(cm, cmap='Blues')
+    cax = plt.matshow(cm, cmap="Blues")
 
     for i in range(len(classes)):
         for j in range(len(classes)):
-            plt.text(j, i, f'{cm[i, j]:.2f}%', va='center', ha='center', color='black', fontsize=12)
+            plt.text(
+                j,
+                i,
+                f"{cm[i, j]:.2f}%",
+                va="center",
+                ha="center",
+                color="black",
+                fontsize=12,
+            )
 
     plt.xticks(range(len(classes)), classes)
     plt.yticks(range(len(classes)), classes)
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    plt.title('Confusion Matrix')
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.title("Confusion Matrix")
     plt.show()
 
 
-def decision_threshold(x_validation: np.ndarray,
-                       w_opt: np.ndarray,
-                       y_validation: np.ndarray):
+def decision_threshold(
+    x_validation: np.ndarray, w_opt: np.ndarray, y_validation: np.ndarray
+):
     """
     Plots the accuracy and the F1 score for different decision thresholds.
     :param x_validation: validation set, used to compute predictions
@@ -146,11 +161,10 @@ def decision_threshold(x_validation: np.ndarray,
         f1_scores.append(f1_score(y_validation, y_prediction))
 
     plt.figure(figsize=(14, 7))
-    plt.plot(thresholds, accuracies, label='Accuracy')
-    plt.plot(thresholds, f1_scores, label='F1 score')
-    plt.xlabel('Decision threshold')
-    plt.ylabel('Metric')
-    plt.title('Accuracy and F1 score for different decision thresholds')
+    plt.plot(thresholds, accuracies, label="Accuracy")
+    plt.plot(thresholds, f1_scores, label="F1 score")
+    plt.xlabel("Decision threshold")
+    plt.ylabel("Metric")
+    plt.title("Accuracy and F1 score for different decision thresholds")
     plt.legend()
     plt.show()
-

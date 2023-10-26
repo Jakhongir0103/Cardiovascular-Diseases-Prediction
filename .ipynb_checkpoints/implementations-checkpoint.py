@@ -1,6 +1,7 @@
 import numpy as np
 
-def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = 'MSE'):
+
+def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = "MSE"):
     """Calculate the loss using MSE or MAE.
 
     Args:
@@ -17,11 +18,18 @@ def compute_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray, loss: str = 'MSE'
     N = y.shape[0]
 
     if loss == "MSE":
-        return 0.5 * np.power(err, 2).sum()/N
+        return 0.5 * np.power(err, 2).sum() / N
     elif loss == "MAE":
-        return np.sum(np.abs(y - np.matmul(tx, w)))/N
+        return np.sum(np.abs(y - np.matmul(tx, w))) / N
 
-def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int = 1, shuffle: bool = True):
+
+def batch_iter(
+    y: np.ndarray,
+    tx: np.ndarray,
+    batch_size: int,
+    num_batches: int = 1,
+    shuffle: bool = True,
+):
     """
     Generate a minibatch iterator for a dataset.
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
@@ -80,6 +88,7 @@ def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int 
         )  # The first data point of the following batch
         yield y[start_index:end_index], tx[start_index:end_index]
 
+
 def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray):
     """Computes the gradient at w.
 
@@ -94,9 +103,12 @@ def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray):
     err = y - tx.dot(w)
     N = len(y)
     grad = -tx.T.dot(err) / N
-    return grad 
+    return grad
 
-def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: int):
+
+def mean_squared_error_gd(
+    y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: int
+):
     """The Gradient Descent (GD) algorithm.
 
     Args:
@@ -116,8 +128,8 @@ def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, 
     w = initial_w
     for n_iter in range(max_iters):
         # compute gradient and loss
-        gradient = compute_gradient(y,tx,w)
-        loss = compute_loss(y,tx,w)
+        gradient = compute_gradient(y, tx, w)
+        loss = compute_loss(y, tx, w)
         # update w
         w = w - gamma * gradient
         # store w and loss
@@ -126,7 +138,10 @@ def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, 
 
     return losses, ws
 
-def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: int):
+
+def mean_squared_error_sgd(
+    y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: int
+):
     """The Stochastic Gradient Descent algorithm (SGD).
 
     Args:
@@ -147,11 +162,13 @@ def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray,
     w = initial_w
 
     for n_iter in range(max_iters):
-        for mini_batch_y, mini_batch_tx in batch_iter(y=y, tx=tx, batch_size=batch_size, shuffle=True):
+        for mini_batch_y, mini_batch_tx in batch_iter(
+            y=y, tx=tx, batch_size=batch_size, shuffle=True
+        ):
             continue
             # compute gradient on batch and loss
-            stochastic_grad = compute_gradient(mini_batch_y,mini_batch_tx,w)
-            loss = compute_loss(mini_batch_y,mini_batch_tx,w)
+            stochastic_grad = compute_gradient(mini_batch_y, mini_batch_tx, w)
+            loss = compute_loss(mini_batch_y, mini_batch_tx, w)
             # update w
             w = w - gamma * stochastic_grad
             # store w and loss
@@ -159,6 +176,7 @@ def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray,
             losses.append(loss)
 
     return losses, ws
+
 
 def least_squares(y: np.ndarray, tx: np.ndarray):
     """Calculate the least squares solution.
@@ -177,9 +195,10 @@ def least_squares(y: np.ndarray, tx: np.ndarray):
     """
     A = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w = np.linalg.solve(A,b)
-    loss = compute_loss(y,tx,w)
+    w = np.linalg.solve(A, b)
+    loss = compute_loss(y, tx, w)
     return w, loss
+
 
 def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: int):
     """implement ridge regression.
