@@ -127,6 +127,7 @@ def reg_logistic_regression_hyperparameters(
         return [dict(zip(hyperpar_dict.keys(), values)) for values in itertools.product(*hyperpar_dict.values())]
 
     hyp_params_settings: List = cartesian_product(hyperpar_dict=hyperpar_grid)
+    w_random = np.random.random(size=x_train.shape[1])
     for hyp_params in hyp_params_settings:
         assert "lambda_" in hyp_params
         assert "gamma" in hyp_params
@@ -142,7 +143,7 @@ def reg_logistic_regression_hyperparameters(
             max_iter=max_iter,
             gamma=hyp_params["gamma"],
             batch_size=hyp_params["batch_size"],
-            w=np.random.random(size=x_train.shape[1]),
+            w=w_random,
             optimizer=hyp_params["optimizer"],
             all_losses=False
         )
