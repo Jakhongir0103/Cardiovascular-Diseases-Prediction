@@ -160,7 +160,7 @@ def decision_threshold(
         accuracies.append(accuracy(y_validation, y_prediction))
         f1_scores.append(f1_score(y_validation, y_prediction))
 
-    plt.figure(figsize=(14, 7))
+    plt.figure(figsize=(8, 5))
     plt.plot(thresholds, accuracies, label="Accuracy")
     plt.plot(thresholds, f1_scores, label="F1 score")
     plt.xlabel("Decision threshold")

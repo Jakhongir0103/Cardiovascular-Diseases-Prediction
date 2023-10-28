@@ -13,6 +13,9 @@ def accuracy(true_labels: np.ndarray, predicted_labels: np.ndarray) -> float:
 
     correct_predictions = np.sum(true_labels == predicted_labels)
     total_samples = true_labels.shape[0]
+    if total_samples == 0:
+        return 0
+
     return correct_predictions / total_samples
 
 
@@ -28,6 +31,8 @@ def precision(
     """
     true_positives = np.sum((true_labels == 1) & (predicted_labels == 1))
     false_positives = np.sum((true_labels == negative_label) & (predicted_labels == 1))
+    if true_positives + false_positives == 0:
+        return 0
 
     return true_positives / (true_positives + false_positives)
 
@@ -44,6 +49,8 @@ def recall(
     """
     true_positives = np.sum((true_labels == 1) & (predicted_labels == 1))
     false_negatives = np.sum((true_labels == 1) & (predicted_labels == negative_label))
+    if true_positives + false_negatives == 0:
+        return 0
 
     return true_positives / (true_positives + false_negatives)
 
@@ -60,6 +67,8 @@ def f1_score(true_labels: np.ndarray, predicted_labels: np.ndarray) -> float:
 
     prec = precision(true_labels, predicted_labels)
     rec = recall(true_labels, predicted_labels)
+    if prec + rec == 0:
+        return 0
 
     return 2 * (prec * rec) / (prec + rec)
 

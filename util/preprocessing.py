@@ -5,11 +5,11 @@ import numpy as np
 
 
 def preprocessing_pipeline(
-    x: np.ndarray,
-    where: Union[str, List[str]],
-    feature_index: Dict[str, int],
-    nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
-    normalize: bool = True,
+        x: np.ndarray,
+        where: Union[str, List[str]],
+        feature_index: Dict[str, int],
+        nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
+        normalize: str = "min-max",
 ) -> np.ndarray:
     """
     Preprocess the dataset x by
@@ -27,24 +27,35 @@ def preprocessing_pipeline(
     :param normalize: whether to normalize the features
     :return: (new) dataset after the preprocessing
     """
-    prepro_df = align_nans(map_values(x, where, feature_index), where, feature_index)
+    pp_data = align_nans(map_values(x, where, feature_index), where, feature_index)
     if nan_replacement is not None:
         for (features_list, val) in nan_replacement:
-            prepro_df = set_nans_to_value(
-                prepro_df, value=val, where=features_list, feature_index=feature_index
+            pp_data = set_nans_to_value(
+                pp_data, value=val, where=features_list, feature_index=feature_index
             )
 
-    if normalize:
-        return normalize_features(prepro_df)
+    if normalize == "min-max":
+        return min_max_normalization(pp_data)
+    elif normalize == "z-score":
+        return z_score_normalization(pp_data)
+    elif normalize == "mixed":
+        normalized_data = np.empty_like(pp_data)
+        # Use min-max normalization for boolean features and z-score normalization for others
+        for f in feature_index.keys():
+            if FEATURES_DICT[f].feature_type == FeatureType.BOOL:
+                normalized_data[:, feature_index[f]] = min_max_normalization(pp_data[:, feature_index[f]])
+            else:
+                normalized_data[:, feature_index[f]] = z_score_normalization(pp_data[:, feature_index[f]])
+        return normalized_data
     else:
-        return prepro_df
+        return pp_data
 
 
 def set_nans_to_value(
-    x: np.ndarray,
-    value: Union[float, str],
-    where: Union[str, List[str]],
-    feature_index: Dict[str, int],
+        x: np.ndarray,
+        value: Union[float, str],
+        where: Union[str, List[str]],
+        feature_index: Dict[str, int],
 ) -> np.ndarray:
     """
     Maps all the nan values to a specified value.
@@ -82,7 +93,7 @@ def set_nans_to_value(
 
 
 def align_nans(
-    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+        x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
 ) -> np.ndarray:
     """
     Maps all the nan aliases to np.nan.
@@ -100,7 +111,7 @@ def align_nans(
 
 
 def map_values(
-    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+        x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
 ):
     """
     Map values of feature(s) according to the pre-determined mapping.
@@ -122,10 +133,10 @@ def map_values(
 
 
 def _apply_preprocessing(
-    x: np.ndarray,
-    where: Union[str, List[str]],
-    feature_index: Dict[str, int],
-    vectorized_operation: Callable,
+        x: np.ndarray,
+        where: Union[str, List[str]],
+        feature_index: Dict[str, int],
+        vectorized_operation: Callable,
 ) -> np.ndarray:
     """
     Skeleton for vectorized-custom-preprocessing of the dataset.
@@ -157,16 +168,38 @@ def _apply_preprocessing(
     return x_processed
 
 
-def normalize_features(data: np.ndarray) -> np.ndarray:
+def min_max_normalization(data: np.ndarray) -> np.ndarray:
     """
     Normalize all the data (feature by feature) using MIN-MAX normalization.
     :param data: np.array of shape (N, D)
     :return: normalized data of shape (N, D)
     """
-
     data_normalized = np.empty_like(data)
-    for column in range(data.shape[1]):
-        data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (
-            data[:, column].max() - data[:, column].min()
-        )
-    return data_normalized
+
+    if data.ndim == 2:
+        for column in range(data.shape[1]):
+            data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (
+                    data[:, column].max() - data[:, column].min()
+            )
+    elif data.ndim == 1:
+        return (data - data.mean()) / data.std()
+    else:
+        return data
+
+
+def z_score_normalization(data: np.ndarray) -> np.ndarray:
+    """
+    Normalize all the data (feature by feature) using Z-SCORES normalization.
+    :param data: np.array of shape (N, D)
+    :return: normalized data of shape (N, D)
+    """
+    data_normalized = np.empty_like(data)
+
+    if data.ndim == 2:
+        for column in range(data.shape[1]):
+            data_normalized[:, column] = (data[:, column] - data[:, column].mean()) / data[:, column].std()
+        return data_normalized
+    elif data.ndim == 1:
+        return (data - data.mean()) / data.std()
+    else:
+        return data
