@@ -16,15 +16,15 @@ def preprocessing_pipeline(
         - 1 Mapping values of each feature using the "map_values" field
         - 2 Aligning invalid values of each feature to np.nan
         - 3 (Optionally) replace nan values
-        - 4 (Optionally) normalize features
+        - 4 Normalize features
 
     :param x: dataset
     :param where: feature or list of features where to apply the preprocessing
     :param feature_index: dictionary that maps feature names to the (column) index in the dataset x
     :param nan_replacement: list that contains tuples (features,value), where "features" is a list of string,
-        containing the feature names for which np.nan has to be replaced to "value". Here, "value" is either a float,
+        containing the feature names for which Nan has to be replaced to "value". Here, "value" is either a float,
         "mean" or "median"
-    :param normalize: whether to normalize the features
+    :param normalize: whether to normalize the features (either "min-max", "z-score" or "mixed")
     :return: (new) dataset after the preprocessing
     """
     pp_data = align_nans(map_values(x, where, feature_index), where, feature_index)
@@ -49,6 +49,52 @@ def preprocessing_pipeline(
         return normalized_data
     else:
         return pp_data
+
+
+def basic_preprocessing_pipeline(
+        x: np.ndarray,
+        where: Union[str, List[str]],
+        feature_index: Dict[str, int],
+        normalization: str = "min-max"
+) -> np.ndarray:
+    """
+    This method performs a simple pipeline of preprocessing, that ignores
+    the meaning and encoding on each of the features on which it's applied.
+    The step of this preprocessing are:
+    - set the NaN values to -1
+    - perform normalization
+
+    :param x: data to be preprocessed of shape (N,D)
+    :param where: list of the features that will be preprocessed
+    :param feature_index: dictionary of features' indexes
+    :param normalization: normalization method
+    :return: preprocessed data of shape (N,D)
+    """
+    x_res = x.copy()
+
+    if normalization == "z-score":
+        normalize = z_score_normalization
+    elif normalization == "min-max":
+        normalize = min_max_normalization
+    else:
+        raise Exception("Method {} for normalization is not available!".format(normalization))
+
+    if type(where) == str:
+        where = [where]
+
+    for feature in where:
+        # Pre-process features we haven't considered so far
+        x_res[:, feature_index[feature]] = np.where(
+            np.isnan(x_res[:, feature_index[feature]]),
+            -1,
+            x_res[:, feature_index[feature]]
+        )
+
+        x_res[:, feature_index[feature]] = normalize(
+            x_res[:, feature_index[feature]]
+        )
+
+    return x_res
 
 
 def set_nans_to_value(

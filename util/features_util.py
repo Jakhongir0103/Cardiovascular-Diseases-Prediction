@@ -3,10 +3,10 @@ import numpy as np
 
 
 def drop_features(
-    data: np.ndarray,
-    feature_to_drop: Union[str, list[str]],
-    features: list[str],
-    feature_index: dict,
+        data: np.ndarray,
+        feature_to_drop: Union[str, list[str]],
+        features: list[str],
+        feature_index: dict,
 ):
     """
     Drop a feature for all the samples.
@@ -38,11 +38,11 @@ def drop_features(
 
 
 def keep_features(
-    data: np.ndarray,
-    features_to_keep: Union[str, list[str]],
-    features: list[str],
-    feature_index: dict,
-    verbose: bool = True,
+        data: np.ndarray,
+        features_to_keep: Union[str, list[str]],
+        features: list[str],
+        feature_index: dict,
+        verbose: bool = True,
 ):
     """
     Keep only the feature(s) specified in features_to_keep.
@@ -73,7 +73,7 @@ def keep_features(
 
 
 def drop_feature_threshold(
-    data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9
+        data: np.ndarray, features: list[str], feature_index: dict, threshold=0.9
 ):
     """
     Drop feature for all the samples, if the values for that features are NaN
@@ -102,10 +102,10 @@ def drop_feature_threshold(
 
 
 def keep_uncorrelated_features(
-    data: np.ndarray,
-    features: Union[list[str], str],
-    feature_index: Dict[str, int],
-    threshold: float = 0.9,
+        data: np.ndarray,
+        features: Union[list[str], str],
+        feature_index: Dict[str, int],
+        threshold: float = 0.9,
 ):
     """
     Keep only the features that are not highly correlated, i.e. the features
@@ -147,3 +147,33 @@ def keep_uncorrelated_features(
     return drop_features(
         data, [features[i] for i in columns_to_remove], features, feature_index
     )
+
+
+def merge_features(
+        x_big: np.ndarray,
+        feature_index_big: Dict[str, int],
+        x_small: np.ndarray,
+        feature_index_small: Dict[str, int]
+) -> np.ndarray:
+    """
+    Given two matrices of data, join them by overwriting the values
+    of the smaller one, onto the correct locations of the bigger one.
+
+    :param x_big: matrix of data big
+    :param feature_index_big: index of features for matrix big
+    :param x_small: matrix of data small
+    :param feature_index_small: index of features for matrix small
+    :return merged data
+    """
+
+    if (len(feature_index_small.keys()) > len(feature_index_big.keys()) or
+            len([f for f in feature_index_small if f in feature_index_big]) != len(feature_index_small)):
+        raise Exception("The two arrays cannot be merged")
+
+    x_res = x_big.copy()
+
+    # Merge the data
+    for feature in feature_index_small.keys():
+        x_res[:, feature_index_big[feature]] = x_small[:, feature_index_small[feature]]
+
+    return x_res
