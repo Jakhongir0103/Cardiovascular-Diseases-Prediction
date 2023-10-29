@@ -5,11 +5,11 @@ import numpy as np
 
 
 def preprocessing_pipeline(
-        x: np.ndarray,
-        where: Union[str, List[str]],
-        feature_index: Dict[str, int],
-        nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
-        normalize: str = "min-max",
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    nan_replacement: List[Tuple[List[str], Union[float, str]]] = None,
+    normalize: str = "min-max",
 ) -> np.ndarray:
     """
     Preprocess the dataset x by
@@ -43,19 +43,23 @@ def preprocessing_pipeline(
         # Use min-max normalization for boolean features and z-score normalization for others
         for f in feature_index.keys():
             if FEATURES_DICT[f].feature_type == FeatureType.BOOL:
-                normalized_data[:, feature_index[f]] = min_max_normalization(pp_data[:, feature_index[f]])
+                normalized_data[:, feature_index[f]] = min_max_normalization(
+                    pp_data[:, feature_index[f]]
+                )
             else:
-                normalized_data[:, feature_index[f]] = z_score_normalization(pp_data[:, feature_index[f]])
+                normalized_data[:, feature_index[f]] = z_score_normalization(
+                    pp_data[:, feature_index[f]]
+                )
         return normalized_data
     else:
         return pp_data
 
 
 def basic_preprocessing_pipeline(
-        x: np.ndarray,
-        where: Union[str, List[str]],
-        feature_index: Dict[str, int],
-        normalization: str = "min-max"
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    normalization: str = "min-max",
 ) -> np.ndarray:
     """
     This method performs a simple pipeline of preprocessing, that ignores
@@ -77,7 +81,9 @@ def basic_preprocessing_pipeline(
     elif normalization == "min-max":
         normalize = min_max_normalization
     else:
-        raise Exception("Method {} for normalization is not available!".format(normalization))
+        raise Exception(
+            "Method {} for normalization is not available!".format(normalization)
+        )
 
     if type(where) == str:
         where = [where]
@@ -87,21 +93,19 @@ def basic_preprocessing_pipeline(
         x_res[:, feature_index[feature]] = np.where(
             np.isnan(x_res[:, feature_index[feature]]),
             -1,
-            x_res[:, feature_index[feature]]
+            x_res[:, feature_index[feature]],
         )
 
-        x_res[:, feature_index[feature]] = normalize(
-            x_res[:, feature_index[feature]]
-        )
+        x_res[:, feature_index[feature]] = normalize(x_res[:, feature_index[feature]])
 
     return x_res
 
 
 def set_nans_to_value(
-        x: np.ndarray,
-        value: Union[float, str],
-        where: Union[str, List[str]],
-        feature_index: Dict[str, int],
+    x: np.ndarray,
+    value: Union[float, str],
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
 ) -> np.ndarray:
     """
     Maps all the nan values to a specified value.
@@ -139,7 +143,7 @@ def set_nans_to_value(
 
 
 def align_nans(
-        x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
 ) -> np.ndarray:
     """
     Maps all the nan aliases to np.nan.
@@ -157,7 +161,7 @@ def align_nans(
 
 
 def map_values(
-        x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
+    x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int]
 ):
     """
     Map values of feature(s) according to the pre-determined mapping.
@@ -179,10 +183,10 @@ def map_values(
 
 
 def _apply_preprocessing(
-        x: np.ndarray,
-        where: Union[str, List[str]],
-        feature_index: Dict[str, int],
-        vectorized_operation: Callable,
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    vectorized_operation: Callable,
 ) -> np.ndarray:
     """
     Skeleton for vectorized-custom-preprocessing of the dataset.
@@ -225,7 +229,7 @@ def min_max_normalization(data: np.ndarray) -> np.ndarray:
     if data.ndim == 2:
         for column in range(data.shape[1]):
             data_normalized[:, column] = (data[:, column] - data[:, column].min()) / (
-                    data[:, column].max() - data[:, column].min()
+                data[:, column].max() - data[:, column].min()
             )
     elif data.ndim == 1:
         return (data - data.mean()) / data.std()
@@ -243,7 +247,9 @@ def z_score_normalization(data: np.ndarray) -> np.ndarray:
 
     if data.ndim == 2:
         for column in range(data.shape[1]):
-            data_normalized[:, column] = (data[:, column] - data[:, column].mean()) / data[:, column].std()
+            data_normalized[:, column] = (
+                data[:, column] - data[:, column].mean()
+            ) / data[:, column].std()
         return data_normalized
     elif data.ndim == 1:
         return (data - data.mean()) / data.std()

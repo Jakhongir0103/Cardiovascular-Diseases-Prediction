@@ -225,10 +225,9 @@ def sigmoid(t):
     return 1 / (1 + np.exp(-t))
 
 
-def logistic_loss(y: np.ndarray,
-                  tx: np.ndarray,
-                  w: np.ndarray,
-                  lambda_: float = None) -> float:
+def logistic_loss(
+    y: np.ndarray, tx: np.ndarray, w: np.ndarray, lambda_: float = None
+) -> float:
     """Compute the cost by negative log likelihood.
     :param  y:  shape=(N, 1)
     :param  tx: shape=(N, D)
@@ -242,17 +241,10 @@ def logistic_loss(y: np.ndarray,
     N = y.shape[0]
     reg = 0
     if lambda_ is not None:
-        reg = 0.5 * lambda_ * np.sum(w ** 2)
+        reg = 0.5 * lambda_ * np.sum(w**2)
         # reg = _lambda * np.sum(w ** 2)
 
     return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
-    # if neg_class == 0:
-    #     return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
-    # elif neg_class == -1:
-    #     return reg + np.sum(np.log(1 + np.exp(- y * (tx @ w)))) / N
-    # else:
-    #     raise ValueError("neg_class must be either 0 or -1")
-
 
 def logistic_loss_gradient(
     y: np.ndarray, tx: np.ndarray, w: np.ndarray, _lambda: float = None
@@ -274,14 +266,6 @@ def logistic_loss_gradient(
         reg = 2 * _lambda * w
 
     return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
-    # if neg_class == 0:
-    #     return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
-    # elif neg_class == -1:
-    #     s = sigmoid(- y * (tx @ w)).reshape(-1, 1)
-    #     return reg + np.sum((- y.reshape(-1, 1) * tx) * s, axis=0) / N
-    # else:
-    #     raise ValueError("neg_class must be either 0 or -1")
-
 
 # Required function
 def logistic_regression(y, tx, w, max_iter: int, gamma: float):
@@ -310,8 +294,14 @@ def logistic_regression(y, tx, w, max_iter: int, gamma: float):
 
 
 # Required function
-def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float,
-                            w: np.ndarray, max_iter: int, gamma: float) -> (np.ndarray, float):
+def reg_logistic_regression(
+    y: np.ndarray,
+    tx: np.ndarray,
+    lambda_: float,
+    w: np.ndarray,
+    max_iter: int,
+    gamma: float,
+) -> (np.ndarray, float):
     """
     Regularized logistic regression using gradient descent.
     Return the optimum w and loss.
@@ -331,15 +321,8 @@ def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float,
     # start the logistic regression
     for iter in range(max_iter):
         # get gradient and update w.
-
-        ### SGD
-        # for batch_y, batch_x in batch_iter(y, tx):
-        #     continue
-        # gradient = logistic_loss_gradient(batch_y, batch_x, w, lambda_)
-
         gradient = logistic_loss_gradient(y, tx, w, lambda_)
         w = w - gamma * gradient
-
     # compute loss
     loss = logistic_loss(y, tx, w)
     return w, loss

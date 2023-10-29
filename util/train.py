@@ -7,17 +7,17 @@ from implementations import logistic_loss, logistic_loss_gradient, batch_iter
 
 
 def reg_logistic_regression(
-        tx_train: np.ndarray,
-        y_train: np.ndarray,
-        tx_valid: np.ndarray,
-        y_valid: np.ndarray,
-        lambda_: float,
-        w: np.ndarray,
-        max_iter: int,
-        gamma: float,
-        batch_size: int = 1,
-        all_losses: bool = False,
-        optimizer: str = "sgd"
+    tx_train: np.ndarray,
+    y_train: np.ndarray,
+    tx_valid: np.ndarray,
+    y_valid: np.ndarray,
+    lambda_: float,
+    w: np.ndarray,
+    max_iter: int,
+    gamma: float,
+    batch_size: int = 1,
+    all_losses: bool = False,
+    optimizer: str = "sgd",
 ):
     """
     Regularized logistic regression using SGD.
@@ -54,7 +54,6 @@ def reg_logistic_regression(
         train_losses = [logistic_loss(y_train, tx_train, w, lambda_)]
         valid_losses = [logistic_loss(y_valid, tx_valid, w, lambda_)]
 
-
     best_w = w
     lowest_loss = np.inf
 
@@ -78,8 +77,8 @@ def reg_logistic_regression(
                 beta_1 = 0.9
                 beta_2 = 0.999
                 m = beta_1 * m + (1 - beta_1) * gradient.reshape(-1, 1)
-                v = beta_2 * v + (1 - beta_2) * (gradient ** 2).reshape(-1, 1)
-                w = w.reshape(-1, 1) - (v ** 0.5) * gamma * m
+                v = beta_2 * v + (1 - beta_2) * (gradient**2).reshape(-1, 1)
+                w = w.reshape(-1, 1) - (v**0.5) * gamma * m
 
                 w.reshape((-1))
 
@@ -101,12 +100,12 @@ def reg_logistic_regression(
 
 
 def reg_logistic_regression_hyperparameters(
-        x_train: np.ndarray,
-        y_train: np.ndarray,
-        x_valid: np.ndarray,
-        y_valid: np.ndarray,
-        hyperpar_grid: Dict[str, List],
-        max_iter: int = 5000,
+    x_train: np.ndarray,
+    y_train: np.ndarray,
+    x_valid: np.ndarray,
+    y_valid: np.ndarray,
+    hyperpar_grid: Dict[str, List],
+    max_iter: int = 5000,
 ) -> List[Dict]:
     """
     GridSearch for regularized logistic regression.
@@ -124,7 +123,10 @@ def reg_logistic_regression_hyperparameters(
     """
 
     def cartesian_product(hyperpar_dict: Dict[str, List]):
-        return [dict(zip(hyperpar_dict.keys(), values)) for values in itertools.product(*hyperpar_dict.values())]
+        return [
+            dict(zip(hyperpar_dict.keys(), values))
+            for values in itertools.product(*hyperpar_dict.values())
+        ]
 
     hyp_params_settings: List = cartesian_product(hyperpar_dict=hyperpar_grid)
     w_random = np.random.random(size=x_train.shape[1])
@@ -145,7 +147,7 @@ def reg_logistic_regression_hyperparameters(
             batch_size=hyp_params["batch_size"],
             w=w_random,
             optimizer=hyp_params["optimizer"],
-            all_losses=False
+            all_losses=False,
         )
         hyp_params["best_weights"] = w
         hyp_params["train_loss"] = train_loss
