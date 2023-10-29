@@ -1,5 +1,5 @@
 import os
-
+import logging
 import numpy as np
 
 from util.data_loader import load_dataset, split_train_validation, create_csv_submission, change_negative_class
@@ -9,15 +9,19 @@ from util.preprocessing import preprocessing_pipeline, basic_preprocessing_pipel
 from util.train import reg_logistic_regression
 from util.evaluation import evaluation_summary, accuracy, f1_score
 from util.util import init_random_seeds
-from util.predict import predict, predict_no_labels
+from util.predict import predict
 
 init_random_seeds()
 
-BASE_PATH = os.path.dirname(os.getcwd()) + "/data"
+BASE_PATH = os.getcwd() + "/data"
 
 
 def main():
+    # Setup logger
+    logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+
     # Load data without subsampling
+    logging.info("Loading dataset")
     x_train, y_train, x_sub, feature_names = load_dataset(path_x_train=BASE_PATH + "/x_train.csv",
                                                           path_y_train=BASE_PATH + "/y_train.csv",
                                                           path_x_test=BASE_PATH + "/x_test.csv",
@@ -27,7 +31,7 @@ def main():
 
 
     ############# Pre processing #############
-
+    logging.info("Starting pre-processing")
     # Pre-process the selected features
     # Keeping only selected features both in train and validation set
     x_train_clean, clean_features, clean_feature_index = keep_features(x_train,
@@ -56,6 +60,7 @@ def main():
 
 
     ############# Data preparation #############
+    logging.info("Preparing and splitting data")
     # Translate labels from -1/1 to 0/1
     y_train = change_negative_class(y_train[:, 1], current=-1, new=0)
 
@@ -70,6 +75,7 @@ def main():
 
 
     ############# Training #############
+    logging.info("Starting training")
     w, train_loss, valid_loss = reg_logistic_regression(x_tr_bias,
                                                         y_tr,
                                                         x_va_bias,
@@ -81,6 +87,7 @@ def main():
                                                         optimizer="sgd",
                                                         w=np.random.random(size=x_tr_bias.shape[1]),
                                                         all_losses=True)
+    logging.info("Training completed!")
 
     ############# Evaluation #############
     # Compute threshold that maximize the F1 score
@@ -88,7 +95,7 @@ def main():
     accuracies = []
     f1_scores = []
     for threshold in thresholds:
-        y_prediction = predict(x_va, w, threshold)
+        y_prediction = predict(x_va_bias, w, threshold)
         accuracies.append(accuracy(y_va, y_prediction))
         f1_scores.append(f1_score(y_va, y_prediction))
     f1_scores = np.array(f1_scores)
@@ -106,6 +113,7 @@ def main():
 
 
     ############# Load and process data for submission #############
+    logging.info("Preprocessing data for submission")
     ids = x_sub[:, 0]
     # Keep only selected features in submission
     x_sub_clean, clean_features, clean_feature_index = keep_features(x_sub,
@@ -135,14 +143,14 @@ def main():
     # Compute predictions
     predicted_y_sub = predict(x_sub_bias,
                               w,
-                              threshold=opt_threshold,
+                              threshold=0.2,
                               negative_label=-1)
 
     # Save predictions to csv file
     create_csv_submission(ids=ids,
                           y_pred=predicted_y_sub,
-                          path=BASE_PATH + "/submission.csv")
-
+                          path=BASE_PATH + "/submission_2.csv")
+    logging.info("Predictions for submission created!")
 
 if __name__ == "__main__":
     main()
