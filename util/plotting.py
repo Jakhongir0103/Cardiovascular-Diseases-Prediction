@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from util.predict import predict
-from util.evaluation import accuracy, f1_score
+from util.evaluation import accuracy, f1_score, recall
 
 
 def multiple_hists(
@@ -154,15 +154,18 @@ def decision_threshold(
     thresholds = np.linspace(0, 1, 200)
     accuracies = []
     f1_scores = []
+    recalls = []
 
     for threshold in thresholds:
         y_prediction = predict(x_validation, w_opt, threshold)
         accuracies.append(accuracy(y_validation, y_prediction))
         f1_scores.append(f1_score(y_validation, y_prediction))
+        recalls.append(recall(y_validation, y_prediction))
 
     plt.figure(figsize=(8, 5))
     plt.plot(thresholds, accuracies, label="Accuracy")
     plt.plot(thresholds, f1_scores, label="F1 score")
+    plt.plot(thresholds, recalls, label="Recall")
     plt.xlabel("Decision threshold")
     plt.ylabel("Metric")
     plt.title("Accuracy and F1 score for different decision thresholds")
