@@ -246,6 +246,7 @@ def logistic_loss(
 
     return reg + np.sum(np.log(1 + np.exp(tx @ w)) - y * (tx @ w)) / N
 
+
 def logistic_loss_gradient(
     y: np.ndarray, tx: np.ndarray, w: np.ndarray, _lambda: float = None
 ) -> np.ndarray:
@@ -266,6 +267,7 @@ def logistic_loss_gradient(
         reg = 2 * _lambda * w
 
     return reg + (tx.T @ (sigmoid(tx @ w) - y)) / N
+
 
 # Required function
 def logistic_regression(y, tx, w, max_iter: int, gamma: float):
