@@ -10,7 +10,10 @@ from data_preparation.data_loader import (
 )
 from data_preparation.features_util import keep_features, merge_features
 from data_preparation.features_info import FEATURES_DICT, REPLACEMENT_LIST
-from data_preparation.preprocessing import preprocessing_pipeline, basic_preprocessing_pipeline
+from data_preparation.preprocessing import (
+    preprocessing_pipeline,
+    basic_preprocessing_pipeline,
+)
 from model.train import reg_logistic_regression
 from model.predict import predict
 from util.evaluation import evaluation_summary, accuracy, f1_score
@@ -20,11 +23,8 @@ init_random_seeds()
 
 BASE_PATH = os.getcwd() + "/data"
 
-hyperparams = {
-    "gamma": 0.5,
-    "lambda": 0.0001,
-    "batch_size": 10000
-}
+hyperparams = {"gamma": 0.5, "lambda": 0.0001, "batch_size": 10000}
+
 
 def main():
     # Setup logger
@@ -62,7 +62,7 @@ def main():
         x_train,
         where=[f for f in feature_names if f not in clean_features],
         feature_index=feature_index,
-        normalize="min-max"
+        normalize="min-max",
     )
 
     # Merge the results of the two preprocessing methods in one array
@@ -139,8 +139,12 @@ def main():
         normalize="mixed",
     )
 
-    x_sub_dirty_proc = basic_preprocessing_pipeline(x_sub, where=[f for f in feature_names if f not in clean_features],
-                                                    feature_index=feature_index, normalize="min-max")
+    x_sub_dirty_proc = basic_preprocessing_pipeline(
+        x_sub,
+        where=[f for f in feature_names if f not in clean_features],
+        feature_index=feature_index,
+        normalize="min-max",
+    )
 
     x_sub_merged = merge_features(
         x_big=x_sub_dirty_proc,
