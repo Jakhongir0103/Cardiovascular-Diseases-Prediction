@@ -12,4 +12,23 @@ The codebase is organized as follows:
 
 To allow our results to be fully reproducible, this script, along with the three notebooks mentioned above, contains a call to a utility method that takes care of setting the correct seed for random numbers generation.
 
-By running the `run.py` script you will be able to generate the same submission file already present in `/data`
+# How to run
+
+First clone our repo:
+
+```bash
+git clone https://github.com/epfml/ml-project-1-sarcastic-gradient-descent.git
+```
+
+Then, before running our model's training and inference, make sure the following files are inside the `/data/` directory:
+
+- `x_train.csv` and `y_train.csv` are required to train the model
+- `x_test.csv` is needed to inference and generate the submission
+
+By running the `run.py` script you will be able to generate the same submission file already present in `/data`:
+
+```bash
+python run.py
+```
+
+To explore the three different versions of the model proposed and described in the report (with different data pre-processing), you can run the three notebooks inside the `/notebook` directory, which also gives an overview of the results and analysis we’ve done via vizualisation.
