@@ -55,8 +55,12 @@ def preprocessing_pipeline(
         return pp_data
 
 
-def basic_preprocessing_pipeline(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int],
-                                 normalize: str = "min-max") -> np.ndarray:
+def basic_preprocessing_pipeline(
+    x: np.ndarray,
+    where: Union[str, List[str]],
+    feature_index: Dict[str, int],
+    normalize: str = "min-max",
+) -> np.ndarray:
     """
     This method performs a simple pipeline of preprocessing, that ignores
     the meaning and encoding on each of the features on which it's applied.
@@ -84,9 +88,13 @@ def basic_preprocessing_pipeline(x: np.ndarray, where: Union[str, List[str]], fe
         )
 
         if normalize == "z-score":
-            x_res[:, feature_index[feature]] = z_score_normalization(x_res[:, feature_index[feature]])
+            x_res[:, feature_index[feature]] = z_score_normalization(
+                x_res[:, feature_index[feature]]
+            )
         elif normalize == "min-max":
-            x_res[:, feature_index[feature]] = min_max_normalization(x_res[:, feature_index[feature]])
+            x_res[:, feature_index[feature]] = min_max_normalization(
+                x_res[:, feature_index[feature]]
+            )
         else:
             raise Exception(
                 "Method {} for normalization is not available!".format(normalize)
