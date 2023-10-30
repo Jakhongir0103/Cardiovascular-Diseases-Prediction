@@ -2,24 +2,29 @@ import os
 import logging
 import numpy as np
 
-from util.data_loader import (
+from data_preparation.data_loader import (
     load_dataset,
     split_train_validation,
     create_csv_submission,
     change_negative_class,
 )
-from util.features_util import keep_features, merge_features
-from util.features_info import FEATURES_DICT, REPLACEMENT_LIST
-from util.preprocessing import preprocessing_pipeline, basic_preprocessing_pipeline
-from util.train import reg_logistic_regression
+from data_preparation.features_util import keep_features, merge_features
+from data_preparation.features_info import FEATURES_DICT, REPLACEMENT_LIST
+from data_preparation.preprocessing import preprocessing_pipeline, basic_preprocessing_pipeline
+from model.train import reg_logistic_regression
+from model.predict import predict
 from util.evaluation import evaluation_summary, accuracy, f1_score
 from util.util import init_random_seeds
-from util.predict import predict
 
 init_random_seeds()
 
 BASE_PATH = os.getcwd() + "/data"
 
+hyperparams = {
+    "gamma": 0.5,
+    "lambda": 0.0001,
+    "batch_size": 10000
+}
 
 def main():
     # Setup logger
@@ -43,7 +48,7 @@ def main():
     x_train_clean, clean_features, clean_feature_index = keep_features(
         x_train, FEATURES_DICT.keys(), feature_names, feature_index, verbose=False
     )
-    # Call to the preprocessing pipeline both for the set of selected features
+    # Call to the informed preprocessing pipeline on the selected features
     x_train_clean_proc = preprocessing_pipeline(
         x_train_clean,
         where=clean_features,
@@ -57,7 +62,7 @@ def main():
         x_train,
         where=[f for f in feature_names if f not in clean_features],
         feature_index=feature_index,
-        normalization="min-max",
+        normalize="min-max"
     )
 
     # Merge the results of the two preprocessing methods in one array
@@ -75,7 +80,7 @@ def main():
 
     # Split local data into train and validation
     (x_tr, x_va, y_tr, y_va) = split_train_validation(
-        x_train_merged, y_train, valid_proportion=0.2
+        x_train_merged, y_train, valid_proportion=0.1
     )
 
     # Add bias column to the training and validation data
@@ -89,10 +94,10 @@ def main():
         y_tr,
         x_va_bias,
         y_va,
-        lambda_=0.00005,
+        lambda_=hyperparams["lambda"],
         max_iter=5000,
-        gamma=0.5,
-        batch_size=10000,
+        gamma=hyperparams["gamma"],
+        batch_size=hyperparams["batch_size"],
         optimizer="sgd",
         w=np.random.random(size=x_tr_bias.shape[1]),
         all_losses=True,
@@ -134,12 +139,8 @@ def main():
         normalize="mixed",
     )
 
-    x_sub_dirty_proc = basic_preprocessing_pipeline(
-        x_sub,
-        where=[f for f in feature_names if f not in clean_features],
-        feature_index=feature_index,
-        normalization="min-max",
-    )
+    x_sub_dirty_proc = basic_preprocessing_pipeline(x_sub, where=[f for f in feature_names if f not in clean_features],
+                                                    feature_index=feature_index, normalize="min-max")
 
     x_sub_merged = merge_features(
         x_big=x_sub_dirty_proc,
@@ -157,7 +158,7 @@ def main():
 
     # Save predictions to csv file
     create_csv_submission(
-        ids=ids, y_pred=predicted_y_sub, path=BASE_PATH + "/submission_2.csv"
+        ids=ids, y_pred=predicted_y_sub, path=BASE_PATH + "/submission.csv"
     )
     logging.info("Predictions for submission created!")
 

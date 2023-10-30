@@ -3,7 +3,7 @@ from typing import Union, List, Dict
 import matplotlib.pyplot as plt
 import numpy as np
 
-from util.predict import predict
+from model.predict import predict
 from util.evaluation import accuracy, f1_score, recall
 
 

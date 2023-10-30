@@ -1,5 +1,5 @@
 from typing import Union, Dict, List, Callable, Tuple
-from util.features_info import Feature, FeatureType, FEATURES_DICT, REPLACEMENT_DICT
+from data_preparation.features_info import Feature, FeatureType, FEATURES_DICT
 
 import numpy as np
 
@@ -55,12 +55,8 @@ def preprocessing_pipeline(
         return pp_data
 
 
-def basic_preprocessing_pipeline(
-    x: np.ndarray,
-    where: Union[str, List[str]],
-    feature_index: Dict[str, int],
-    normalization: str = "min-max",
-) -> np.ndarray:
+def basic_preprocessing_pipeline(x: np.ndarray, where: Union[str, List[str]], feature_index: Dict[str, int],
+                                 normalize: str = "min-max") -> np.ndarray:
     """
     This method performs a simple pipeline of preprocessing, that ignores
     the meaning and encoding on each of the features on which it's applied.
@@ -71,19 +67,10 @@ def basic_preprocessing_pipeline(
     :param x: data to be preprocessed of shape (N,D)
     :param where: list of the features that will be preprocessed
     :param feature_index: dictionary of features' indexes
-    :param normalization: normalization method
+    :param normalize: normalization method
     :return: preprocessed data of shape (N,D)
     """
     x_res = x.copy()
-
-    if normalization == "z-score":
-        normalize = z_score_normalization
-    elif normalization == "min-max":
-        normalize = min_max_normalization
-    else:
-        raise Exception(
-            "Method {} for normalization is not available!".format(normalization)
-        )
 
     if type(where) == str:
         where = [where]
@@ -96,7 +83,14 @@ def basic_preprocessing_pipeline(
             x_res[:, feature_index[feature]],
         )
 
-        x_res[:, feature_index[feature]] = normalize(x_res[:, feature_index[feature]])
+        if normalize == "z-score":
+            x_res[:, feature_index[feature]] = z_score_normalization(x_res[:, feature_index[feature]])
+        elif normalize == "min-max":
+            x_res[:, feature_index[feature]] = min_max_normalization(x_res[:, feature_index[feature]])
+        else:
+            raise Exception(
+                "Method {} for normalization is not available!".format(normalize)
+            )
 
     return x_res
 
