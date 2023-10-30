@@ -1,6 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/U9FTc9i_)
+# "THE GOOD", "THE BAD" and "THE UGLY" for Cardiovascular Diseases Prediction on the Behavioral Risk Factor Surveillance System 
 
-# Codebase organization
+## Codebase organization
 The codebase is organized as follows:
 
 - `implementations.py` contains the code for each method in the list of required ML functions, together with support methods useful to make the ML functions implementations more readable.
@@ -12,7 +13,7 @@ The codebase is organized as follows:
 
 To allow our results to be fully reproducible, this script, along with the three notebooks mentioned above, contains a call to a utility method that takes care of setting the correct seed for random numbers generation.
 
-# How to run
+## How to run
 
 First clone our repo:
 
@@ -25,7 +26,8 @@ Then, before running our model's training and inference, make sure the following
 - `x_train.csv` and `y_train.csv` are required to train the model
 - `x_test.csv` is needed to inference and generate the submission
 
-By running the `run.py` script you will be able to generate the same submission file already present in `/data`:
+By running the `run.py` script you will be able to generate the same submission file already present in `/data`. Note that in the report we've described and compared three different approaches: the good, the bad and the ugly.
+This main script actually uses "the ugly" which is the one that performed best on the validator, but other approaches presented more interpretability and other advantages discussed in the report.
 
 ```bash
 python run.py
