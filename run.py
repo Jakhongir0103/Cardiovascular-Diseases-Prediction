@@ -154,7 +154,7 @@ def main():
     )
 
     # Compute predictions
-    predicted_y_sub = predict(x_sub_bias, w, threshold=0.2, negative_label=-1)
+    predicted_y_sub = predict(x_sub_bias, w, threshold=opt_threshold, negative_label=-1)
 
     # Save predictions to csv file
     create_csv_submission(
