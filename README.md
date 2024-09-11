@@ -1,7 +1,37 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/U9FTc9i_)
-# "THE GOOD", "THE BAD" and "THE UGLY" for Cardiovascular Diseases Prediction on the Behavioral Risk Factor Surveillance System 
+# "THE GOOD", "THE BAD" and "THE UGLY" for Cardiovascular Diseases Prediction on the Behavioral Risk Factor Surveillance System
 
 ## Codebase organization
+
+📦Repository\
+ ┣ 📂data\
+ ┃ ┣ 📜submission.csv\
+ ┃ ┣ 📜x_test.csv\
+ ┃ ┣ 📜x_train.csv\
+ ┃ ┗ 📜y_train.csv\
+ ┣ 📂data_preparation\
+ ┃ ┣ 📜data_loader.py\
+ ┃ ┣ 📜features_info.py\
+ ┃ ┣ 📜features_util.py\
+ ┃ ┗ 📜preprocessing.py\
+ ┣ 📂model\
+ ┃ ┣ 📜predict.py\
+ ┃ ┗ 📜train.py\
+ ┣ 📂notebooks\
+ ┃ ┣ 📜final-grid-search.ipynb\
+ ┃ ┣ 📜heatmaps.ipynb\
+ ┃ ┣ 📜run_BAD.ipynb\
+ ┃ ┣ 📜run_GOOD.ipynb\
+ ┃ ┣ 📜run_UGLY.ipynb\
+ ┃ ┗ 📜THE-GOOD.pkl\
+ ┣ 📂util\
+ ┃ ┣ 📜custom_pca.py\
+ ┃ ┣ 📜evaluation.py\
+ ┃ ┣ 📜plotting.py\
+ ┃ ┗ 📜util.py\
+ ┣ 📜implementations.py\
+ ┣ 📜README.md\
+ ┗ 📜run.py
+
 The codebase is organized as follows:
 
 - `implementations.py` contains the code for each method in the list of required ML functions, together with support methods useful to make the ML functions implementations more readable.
